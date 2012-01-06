@@ -28,7 +28,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class Polygon implements Shape
+public class Polygon implements Feature
 {
 
     private Path2D.Float path;		// Internal representation of the polygon's geometry.

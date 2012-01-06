@@ -1,7 +1,7 @@
 package org.gicentre.geomap;
 
 //*****************************************************************************************
-/** Identifies the behaviour of all shapes.
+/** Identifies the behaviour of all features.
  *  @author Iain Dillingham, giCentre, City University London.
  *  @version 1.0, 6th January, 2012
  */
@@ -20,11 +20,11 @@ package org.gicentre.geomap;
  * source code (see COPYING.LESSER included with this source code). If not, see
  * http://www.gnu.org/licenses/.
  */
-public interface Shape
+public interface Feature
 {
 
     /**
-     * Should draw the shape in the parent sketch.
+     * Should draw the feature in the parent sketch.
      */
     public abstract void draw();
 }
