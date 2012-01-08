@@ -4,13 +4,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PMatrix2D;
 import processing.core.PVector;
 
 //*****************************************************************************************
 /** Class for drawing a polygon in screen coordinate space.
  *  @author Jo Wood and Iain Dillingham, giCentre, City University London.
- *  @version 1.0, 6th January, 2012
+ *  @version 1.1, 8th January, 2012
  */
 // *****************************************************************************************
 
@@ -30,24 +31,25 @@ import processing.core.PVector;
 
 public class Polygon implements Feature
 {
-
+	// --------------------------------- Object variables ---------------------------------
+	
     private Path2D.Float path;		// Internal representation of the polygon's geometry.
     private PApplet parent;			// Parent sketch.
 
-    /**
-     * Constructs a new polygon object with the default geometry.
-     * @param parent The parent sketch.
+    // ----------------------------------- Constructors -----------------------------------
+    
+    /** Constructs a new polygon object with the default geometry.
+     *  @param parent The parent sketch.
      */
     public Polygon(PApplet parent)
     {
         this(null, null, parent);
     }
 
-    /**
-     * Constructs a new polygon object with the given geometry.
-     * @param x x coordinate.
-     * @param y y coordinate.
-     * @param parent The parent sketch.
+    /** Constructs a new polygon object with the given geometry.
+     *  @param x x coordinates of the polygon.
+     *  @param y y coordinates of the polygon.
+     *  @param parent The parent sketch.
      */
     public Polygon(float[] x, float[] y, PApplet parent)
     {
@@ -62,50 +64,77 @@ public class Polygon implements Feature
             }
         }
     }
-
-    /**
-     * Adds a point to a new or the existing path.
-     * @param x x coordinate.
-     * @param y y coordinate.
+    
+    // ------------------------------------- Methods -------------------------------------
+    
+    /** Adds a new part to the polygon. This allows complex polygons with islands, holes and multiple
+     *  parts to be created.
+     *  @param x x coordinates of the polygon.
+     *  @param y y coordinates of the polygon.
      */
-    private void addPoint(float x, float y)
+    public void addPart(float[] x, float[] y)
     {
-        if (path.getCurrentPoint() == null)
+    	if ((x != null) && (y != null) && (x.length == y.length))
         {
-            // New path.
-            path.moveTo(x, y);
-        } else
-        {
-            // Existing path.
-            path.lineTo(x, y);
-        }
+    		path.moveTo(x[0], y[0]);	
+            for (int i=1; i<x.length; i++)
+            {
+                addPoint(x[i], y[i]);
+            }
+        }	
     }
 
-    /**
-     * Draws the polygon in the parent sketch.
+    /** Draws the polygon in the parent sketch.
+     *  @param transformer Class that handles the geographic to screen transformations.
      */
-    public void draw()
+    public void draw(Geographic transformer)
     {
-        parent.beginShape();
-
+    	boolean containsGeom = false;
         PathIterator i = path.getPathIterator(new AffineTransform());
         float[] coords = new float[6];
 
         while (!i.isDone())
         {
             int segType = i.currentSegment(coords);
-            parent.vertex(coords[0], coords[1]);
+            
+                        
+            if (segType == PathIterator.SEG_MOVETO)
+            {
+            	if (containsGeom)
+            	{
+            		parent.endShape(PConstants.CLOSE);
+            	}
+            	parent.beginShape();
+            	containsGeom = true;           	
+            }
+            
+            if (segType == PathIterator.SEG_CLOSE)
+            {
+            	if (containsGeom)
+            	{
+            		parent.endShape(PConstants.CLOSE);
+            		containsGeom = false;
+            	}
+            }
+            
+            if (containsGeom)
+            {
+            	PVector p = transformer.geoToScreen(coords[0], coords[1]);
+            	parent.vertex(p.x,p.y);
+            }
+            
             i.next();
         }
-
-        parent.endShape(PApplet.CLOSE);
+        if (containsGeom)
+        {
+        	parent.endShape(PConstants.CLOSE);
+        }
     }
 
-    /**
-     * Tests whether the given point is contained within the polygon.
-     * @param x x coordinate
-     * @param y y coordinate
-     * @return True if the given point is contained within the polygon, false if not.
+    /** Tests whether the given point is contained within the polygon.
+     *  @param x x coordinate in geographic coordinates.
+     *  @param y y coordinate in geographic coordinates.
+     *  @return True if the given point is contained within the polygon, false if not.
      */
     public boolean contains(float x, float y)
     {
@@ -116,13 +145,32 @@ public class Polygon implements Feature
         return path.createTransformedShape(affine).contains(x, y);
     }
 
-    /**
-     * Tests whether the given point is contained within the polygon.
-     * @param vector x and y coordinates.
-     * @return True if the given point is contained within the polygon, false if not.
+    /** Tests whether the given point is contained within the polygon.
+     *  @param location of the point to test in geographic coordinates.
+     *  @return True if the given point is contained within the polygon, false if not.
      */
-    public boolean contains(PVector vector)
+    public boolean contains(PVector location)
     {
-        return contains(vector.x, vector.y);
+        return contains(location.x, location.y);
+    }
+    
+    // --------------------------------------- Private methods --------------------------------------- 
+    
+    /** Adds a point to a new or the existing path.
+     *  @param x x coordinate of the point to add.
+     *  @param y y coordinate of the point to add.
+     */
+    private void addPoint(float x, float y)
+    {
+        if (path.getCurrentPoint() == null)
+        {
+            // New path.
+            path.moveTo(x, y);
+        } 
+        else
+        {
+            // Existing path.
+            path.lineTo(x, y);
+        }
     }
 }
