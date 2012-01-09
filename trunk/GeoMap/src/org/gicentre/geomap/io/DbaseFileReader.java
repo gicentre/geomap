@@ -252,24 +252,24 @@ public class DbaseFileReader
     // --------------------------- Private Methods ----------------------------
     
     /** Fills the given byte buffer with contents via the given channel.
-      * @param buffer Buffer to fill.
-      * @param channel Channel from which to read database.
+      * @param bBuffer Buffer to fill.
+      * @param bChannel Channel from which to read database.
       * @return The number of bytes read, possibly zero, or -1 if the channel has reached end-of-stream.
       * @throws IOException If problem filling the buffer.
       */
-    private int fill(ByteBuffer buffer, ReadableByteChannel channel) throws IOException 
+    private int fill(ByteBuffer bBuffer, ReadableByteChannel bChannel) throws IOException 
     {
-        int r = buffer.remaining();
+        int r = bBuffer.remaining();
         // channel reads return -1 when EOF or other error
         // because they are non-blocking reads, 0 is a valid return value!!
     
-        while (buffer.remaining() > 0 && r != -1) 
+        while (bBuffer.remaining() > 0 && r != -1) 
         {
-            r = channel.read(buffer);
+            r = bChannel.read(bBuffer);
         }
         if (r == -1) 
         {
-            buffer.limit(buffer.position());
+            bBuffer.limit(bBuffer.position());
         }
         return r;
     }

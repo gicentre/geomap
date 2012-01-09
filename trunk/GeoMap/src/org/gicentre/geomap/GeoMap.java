@@ -37,6 +37,7 @@ public class GeoMap implements Geographic
     private float minGeoY, maxGeoY;                        // Minimum and maximum geographic values in the y direction.
     private float xOrigin, yOrigin, mapWidth, mapHeight;   // The bounds of the map in screen coordinates.
     private Map<Float, Feature> features;                  // The key/value pair for each feature.
+    private Table attributes;							   // Attribute table associated with feature collection.
     
     												/** Value used to indicate no data. */
     public final static float NO_DATA = Float.MAX_VALUE;
@@ -71,6 +72,7 @@ public class GeoMap implements Geographic
         this.maxGeoY  = yOrigin+mapHeight;	
         
         this.features = new HashMap<Float, Feature>();
+        this.attributes = new Table(0,0,parent);
     }
 
     /** Reads geometry and attributes from a shapefile.
@@ -100,7 +102,7 @@ public class GeoMap implements Geographic
     	maxGeoX = reader.getMaxX();
     	maxGeoY = reader.getMaxY();
     	features = reader.getFeatures();
-    	
+    	attributes = reader.getAttributes();    	
     }
 
     /** Draws the map in the parent sketch.
