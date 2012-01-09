@@ -1,5 +1,6 @@
 package org.gicentre.geomap;
 
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import processing.core.PApplet;
@@ -32,7 +33,7 @@ public class Table
 	private String[] header;		// Column headings.
 	private String[][] data;		// All data stored as strings.
 	private int rowCount;			// Number of rows in the table.
-	
+
 	// ----------------------------------- Constructors -----------------------------------
 
 	/** Creates a new empty 10 by 10 table.
@@ -49,7 +50,7 @@ public class Table
 	public Table(String filename, PApplet parent) 
 	{
 		String[] rows = parent.loadStrings(filename);
-	
+
 		if (rows == null)
 		{
 			System.err.println("Warning: "+filename+" not found. No data loaded into table.");
@@ -64,17 +65,17 @@ public class Table
 			{
 				continue;     // Skip empty rows
 			}
-			if (rows[i].startsWith("#"))
+			if (rows[i].trim().startsWith("#"))
 			{
 				if (header == null)
 				{
-					header = PApplet.split(rows[i].substring(1), PConstants.TAB);
+					header = PApplet.split(rows[i].trim().substring(1), PConstants.TAB);
 				}
 				continue;    // Skip comment lines
 			}
 
 			// Split the row on the tabs
-			String[] pieces = PApplet.split(rows[i], PConstants.TAB);
+			String[] pieces = PApplet.split(rows[i].trim(), PConstants.TAB);
 
 			// Copy to the table array
 			data[rowCount] = pieces;
@@ -260,6 +261,13 @@ public class Table
 		int rowIndex = getRowIndex(rowName);
 		data[rowIndex][column] = PApplet.str(what);
 	}
+	
+	/** Writes this table in TSV format to standard output.
+	 */
+	public void write() 
+	{
+		write(new PrintWriter(new OutputStreamWriter(System.out)));
+	}
 
 	/** Writes this table as a TSV file to the given writer.
 	 *  @param writer Output writer in which to send table contents.
@@ -288,8 +296,8 @@ public class Table
 			}
 			writer.println();
 		}
-		
-		
+
+
 		for (int i=0; i<rowCount; i++)
 		{
 			for (int j=0; j<data[i].length; j++)
@@ -307,53 +315,119 @@ public class Table
 		}
 		writer.flush();
 	}
-	
+
+
+	/** Writes this table as formatted text to standard output. This is designed for producing 'pretty'
+	 *  text output so table can be examined more easily.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
+	 */
+	public void writeAsTable(int maxNumRows) 
+	{
+		writeAsTable(new PrintWriter(new OutputStreamWriter(System.out)),maxNumRows);
+	}
 	
 	/** Writes this table as formatted text to the given writer. This is designed for producing 'pretty'
 	 *  text output so table can be examined more easily.
-	 *  @param numRows Maximum number of rows of the table to display.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
 	 *  @param writer Output writer in which to send table contents.
 	 */
-	public void writeAsTable(PrintWriter writer, int numRows) 
+	public void writeAsTable(PrintWriter writer, int maxNumRows) 
 	{
-		// Find out the number of columns and maximum width of each.
-		
+		int numRows = Math.min(maxNumRows, data.length);
+
+		// Find out the number of columns.
+		int numCols = 0;
 		if (header != null)
 		{
-			for (int j=0; j<header.length; j++)
+			numCols = header.length;
+		}
+		
+		for (int row=0; row<numRows; row++)
+		{
+			numCols = Math.max(numCols, data[row].length);
+		}
+
+		// Find the maximum number of characters in each column.
+		int[] maxWidths = new int[numCols];
+		if (header != null)
+		{
+			for (int col=0; col<header.length; col++)
 			{
-				if (j != 0)
+				maxWidths[col] = Math.max(maxWidths[col], header[col].length());
+			}
+		}
+		for (int row=0; row<numRows; row++)
+		{
+			for (int col=0; col<data[row].length; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], data[row][col].length());
+			}
+		}
+
+		int totalWidth = numCols+1;
+		for (int col=0; col<maxWidths.length; col++)
+		{
+			totalWidth += maxWidths[col];
+		}
+
+		// Display formatted output.
+		for (int i=0; i<totalWidth; i++)
+		{
+			writer.print("-");
+		}
+		writer.println();
+
+		if (header != null)
+		{
+			writer.print("|");
+			for (int col=0; col<numCols; col++)
+			{
+				int numSpaces = maxWidths[col];
+				if (col<header.length) 
 				{
-					writer.print(PConstants.TAB);
+					writer.print(header[col]);
+					numSpaces -= header[col].length();
 				}
-				if (header[j] != null)
+				for (int space=0; space<numSpaces; space++)
 				{
-					if (j==0)
-					{
-						writer.print("#"+header[0]);
-					}
-					else
-					{
-						writer.print(header[j]);
-					}
+					writer.print(" ");
 				}
+				writer.print("|");
+			}
+			writer.println();
+
+			for (int i=0; i<totalWidth; i++)
+			{
+				writer.print("-");
 			}
 			writer.println();
 		}
-		
-		
-		for (int i=0; i<rowCount; i++)
+
+		for (int row=0; row<numRows; row++)
 		{
-			for (int j=0; j<data[i].length; j++)
+			writer.print("|");
+			for (int col=0; col<numCols; col++)
 			{
-				if (j != 0)
+				int numSpaces = maxWidths[col];
+				if (col<data[row].length)
 				{
-					writer.print(PConstants.TAB);
+					writer.print(data[row][col]);
+					numSpaces -= data[row][col].length();
 				}
-				if (data[i][j] != null)
+				for (int space=0; space<numSpaces; space++)
 				{
-					writer.print(data[i][j]);
+					writer.print(" ");
 				}
+				writer.print("|");
+			}
+			writer.println();
+		}
+
+		if (numRows == data.length)
+		{
+			for (int i=0; i<totalWidth; i++)
+			{
+				writer.print("-");
 			}
 			writer.println();
 		}
