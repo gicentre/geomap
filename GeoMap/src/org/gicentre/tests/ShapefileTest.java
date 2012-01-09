@@ -1,13 +1,14 @@
 package org.gicentre.tests;
 
 import org.gicentre.geomap.GeoMap;
+import org.gicentre.geomap.Table;
 
 import processing.core.PApplet;
 
 //  ****************************************************************************************
 /** Tests shapefile reading into geoMap objects.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 8th January, 2012.
+ *  @version 1.0, 9th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -28,7 +29,6 @@ import processing.core.PApplet;
 @SuppressWarnings("serial")
 public class ShapefileTest extends PApplet
 {
-
     // ------------------------------ Starter method ------------------------------- 
 
     /** Runs the sketch as an application.
@@ -41,7 +41,7 @@ public class ShapefileTest extends PApplet
     
     // ----------------------------- Object variables ------------------------------
     
-    GeoMap geoMap;
+    private GeoMap geoMap;
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -53,11 +53,10 @@ public class ShapefileTest extends PApplet
         smooth();
         
         geoMap = new GeoMap(this);
-        geoMap.readFile("greaterLondonWardBoundaries");
-                
+        geoMap.readFile("greaterLondonWardBoundaries");                
     }
 
-    /** Draws the help screen if has been toggled on.
+    /** Draws the shapefile data in the sketch.
      */
     public void draw()
     {   
@@ -67,7 +66,5 @@ public class ShapefileTest extends PApplet
         geoMap.draw();
         
         noLoop();
-       
-    }
-      
+    }    
 }

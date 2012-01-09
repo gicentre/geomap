@@ -41,7 +41,24 @@ public class Table
 	 */
 	public Table(PApplet parent) 
 	{
-		data = new String[10][10];
+		this(10,10,parent);
+	}
+	
+	/** Creates a new empty table with the given dimensions
+	 *  @param numRows Number of rows in table.
+	 *  @param numCols Number of columns in table.
+	 *  @param parent Sketch controlling the location of files to load and save.
+	 */
+	public Table(int numRows, int numCols, PApplet parent) 
+	{
+		data = new String[numRows][numCols];
+		for (int row=0; row<data.length; row++)
+		{
+			for (int col=0; col<data[row].length; col++)
+			{
+				data[row][col] = new String();
+			}
+		}
 	}
 
 	/** Creates a table from the given tab separated values file.
@@ -54,6 +71,14 @@ public class Table
 		if (rows == null)
 		{
 			System.err.println("Warning: "+filename+" not found. No data loaded into table.");
+			data = new String[10][10];
+			for (int row=0; row<data.length; row++)
+			{
+				for (int col=0; col<data[row].length; col++)
+				{
+					data[row][col] = new String();
+				}
+			}
 			return;
 		}
 
@@ -88,6 +113,13 @@ public class Table
 
 	// ------------------------------------- Methods -------------------------------------
 
+	/** Sets the column headings for the table.
+	 *  @param headings Text headings for each column in the table.
+	 */
+	public void setHeadings(String[] headings)
+	{
+		this.header = headings;
+	}
 
 	/** Reports the number of rows in the table.
 	 *  @return Number of rows in the table.

@@ -1,23 +1,19 @@
 package org.gicentre.geomap.io;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.gicentre.geomap.Feature;
-import org.gicentre.geomap.FeatureType;
 import org.gicentre.geomap.GeoMap;
 import org.gicentre.geomap.Line;
 import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
+import org.gicentre.geomap.Table;
 
 import processing.core.PApplet;
 
@@ -52,6 +48,8 @@ public class ShapefileReader
 	private int recordNumber;						// ID of each record in the shapefile.
 
 	private HashMap<Float, Feature>features;		// Stores feature geometry.
+	private Table attributes;						// Stores feature attributes.
+	
 	private PApplet parent;							// Parent sketch.
 	
 	private float minX,minY,maxX,maxY;				// Geographic bounds of the file read.
@@ -209,6 +207,9 @@ public class ShapefileReader
 			e.printStackTrace();
 			return false;
 		}
+		
+		// Read attrbutes from the DBF file
+		readDBF(dbInputStream);
 
 		return true;
 	}
@@ -219,6 +220,14 @@ public class ShapefileReader
 	public Map<Float,Feature>getFeatures()
 	{
 		return features;
+	}
+	
+	/** Provides the attribute table that has been extracted from the shapefile.
+	 *  @return Attribute table from shapefile.
+	 */
+	public Table getAttributes()
+	{
+		return attributes;
 	}
 	
 	/** Reports the minimum geographic value in the x-direction.
@@ -365,6 +374,7 @@ public class ShapefileReader
 	 *  @param readZ Reads a z value if true.
 	 *  @param readM Reads a measure if true.
 	 */
+	@SuppressWarnings("null")
 	private void addMultiPoint(InputStream inStream, boolean readZ, boolean readM)
 	{
 		// Skip bounding box info.
@@ -838,16 +848,14 @@ public class ShapefileReader
 	}
 
 	/** Reads a DBF file (dBase III format) and populates an attribute table with its contents.
-	 *  @param inStream INput stream pointing to the DBF file to read.
-	 *  @return Attribute table containing data or null if table not read. 
-	 * /
-	private AttributeTable readDBF(InputStream inStream)
+	 *  @param inStream Input stream pointing to the DBF file to read.
+	 *  @return True if table read successfully.
+	 */
+	private boolean readDBF(InputStream inStream)
 	{
-		AttributeTable attTable = null;
-
 		try
 		{
-			FileChannel channel = inStream.getChannel();
+			ReadableByteChannel channel = Channels.newChannel(inStream);
 			DbaseFileReader reader = new DbaseFileReader(channel);
 
 			// Read in column name headings.   
@@ -860,14 +868,22 @@ public class ShapefileReader
 				headings[i] = header.getFieldName(i-1);
 			}
 
-			attTable = new AttributeTable(headings.length,headings);
+			attributes = new Table(header.getNumRecords(), header.getNumFields()+1,parent);
+			attributes.setHeadings(headings);
 			int id = 1;
+			
 
 			// Read in row at a time.
 			while (reader.hasNext()) 
 			{      
 				Object[] atts = reader.readSimpleEntry();
-				attTable.addAttributes(id++,atts);
+				attributes.setInt(id-1, 0, id);
+				
+				for (int i=0; i<atts.length; i++)
+				{
+					attributes.setString(id-1, i+1, atts[i].toString());
+				}
+				id++;
 			}
 			reader.close();
 		}
@@ -875,17 +891,17 @@ public class ShapefileReader
 		catch (FileNotFoundException e)
 		{
 			System.err.println("Shapefile DBF not found. Using IDs only.");
-			return null;
+			return false;
 		}
 		catch (IOException e)
 		{
 			System.err.println("Problem reading Shapefile DBF. Using IDs only.");
-			return null;
+			return false;
 		}
 
-		return attTable;  
+		return true;  
 	}
-	*/
+	
 
 	/** Skips the given number of bytes in the input stream.
 	 *  @param is Input stream.
