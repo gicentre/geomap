@@ -3,6 +3,8 @@ package org.gicentre.geomap;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PMatrix2D;
@@ -35,6 +37,8 @@ public class Polygon implements Feature
 	
     private Path2D.Float path;		// Internal representation of the polygon's geometry.
     private PApplet parent;			// Parent sketch.
+    private int numVertices;		// Number of vertices that make up the polygon (including parts).
+    private ArrayList<Integer>subPartPointers;
 
     // ----------------------------------- Constructors -----------------------------------
     
@@ -55,6 +59,8 @@ public class Polygon implements Feature
     {
         this.parent = parent;
         path = new Path2D.Float();
+        numVertices = 0;
+        subPartPointers = new ArrayList<Integer>();
 
         if ((x != null) && (y != null) && (x.length == y.length))
         {
@@ -62,6 +68,8 @@ public class Polygon implements Feature
             {
                 addPoint(x[i], y[i]);
             }
+            numVertices = x.length;
+            subPartPointers.add(new Integer(0));
         }
     }
     
@@ -76,11 +84,14 @@ public class Polygon implements Feature
     {
     	if ((x != null) && (y != null) && (x.length == y.length))
         {
+    		subPartPointers.add(new Integer(numVertices));
+    		 
     		path.moveTo(x[0], y[0]);	
             for (int i=1; i<x.length; i++)
             {
                 addPoint(x[i], y[i]);
             }
+            numVertices += x.length;
         }	
     }
 
@@ -96,7 +107,6 @@ public class Polygon implements Feature
         while (!i.isDone())
         {
             int segType = i.currentSegment(coords);
-            
                         
             if (segType == PathIterator.SEG_MOVETO)
             {
@@ -130,6 +140,111 @@ public class Polygon implements Feature
         	parent.endShape(PConstants.CLOSE);
         }
     }
+    
+    /** Reports the number of vertices that make up the polygon feature.
+     *  @return number of vertices that make up the polygon.
+     */
+    public int getNumVertices()
+    {
+    	return numVertices;
+    }
+    
+    /** Reports pointers to the vertex index for each of the partss that make up the polygon feature.
+     *  Simple polygons have one part with a vertex index of 0. Complex polygons can comprise many parts
+     *  such as islands, holes etc. The position in the list of coordinates returned by getXcoord()s and
+     *  getYCoords() of the start of each part is returned here.
+     *  @return Pointers to the start of each polygon part.
+     */
+    public ArrayList<Integer> getSubPartPointers()
+    {
+    	return subPartPointers;
+    }
+    
+    /** Reports the x coordinates coordinates of the polygon feature. This includes the coordinates for
+     *  all parts in multi-part polygons. To break down the coordinates into parts, call getSubPartPointers()
+     *  to find the position in the array corresponding to the start of each part.
+	 *  @return x coordinates of the polygon feature.
+	 */
+	public float[] getXCoords()
+	{
+		float[] x = new float[numVertices];
+		
+		boolean containsGeom = false;
+        PathIterator i = path.getPathIterator(new AffineTransform());
+        float[] coords = new float[6];
+        int counter=0;
+
+        while (!i.isDone())
+        {
+            int segType = i.currentSegment(coords);
+                        
+            if (segType == PathIterator.SEG_MOVETO)
+            {
+            	containsGeom = true;           	
+            }
+            if (segType == PathIterator.SEG_CLOSE)
+            {
+            	if (containsGeom)
+            	{
+            		containsGeom = false;
+            	}
+            }
+            
+            if (containsGeom)
+            {
+            	x[counter++] = coords[0];
+            }
+            i.next();
+        }
+		return x;
+	}
+	
+	/** Reports the y coordinates coordinates of the polygon feature. This includes the coordinates for
+     *  all parts in multi-part polygons. To break down the coordinates into parts, call getSubPartPointers()
+     *  to find the position in the array corresponding to the start of each part.
+	 *  @return y coordinates of the polygon feature.
+	 */
+	public float[] getYCoords()
+	{
+		float[] y = new float[numVertices];
+		
+		boolean containsGeom = false;
+        PathIterator i = path.getPathIterator(new AffineTransform());
+        float[] coords = new float[6];
+        int counter=0;
+
+        while (!i.isDone())
+        {
+            int segType = i.currentSegment(coords);
+                        
+            if (segType == PathIterator.SEG_MOVETO)
+            {
+            	containsGeom = true;           	
+            }
+            if (segType == PathIterator.SEG_CLOSE)
+            {
+            	if (containsGeom)
+            	{
+            		containsGeom = false;
+            	}
+            }
+            
+            if (containsGeom)
+            {
+            	y[counter++] = coords[1];
+            }
+            i.next();
+        }
+		return y;
+	}
+    
+    /** Report the type of feature (polygon).
+	 *  @return Type of feature
+	 */
+	public FeatureType getType()
+	{
+		return FeatureType.POLYGON;
+	}
 
     /** Tests whether the given point is contained within the polygon.
      *  @param x x coordinate in geographic coordinates.

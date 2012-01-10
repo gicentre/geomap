@@ -52,6 +52,30 @@ public class Point implements Feature
         this.parent = parent;
         p = new PVector(x,y,z);
     }
+    
+    /** Reports the number of vertices that make up the point definition.
+     *  @return number of vertices that make up the point. This will always be 1.
+     */
+    public int getNumVertices()
+    {
+    	return 1;
+    }
+    
+    /** Report the type of feature (point).
+	 *  @return Type of feature
+	 */
+	public FeatureType getType()
+	{
+		return FeatureType.POINT;
+	}
+	
+	/** Reports the coordinates of the point feature.
+	 *  @return Coordinates of the point feature.
+	 */
+	public PVector getCoords()
+	{
+		return p;
+	}
 
     /** Draws the point in the parent sketch.
      *  @param transformer Class that handles the geographic to screen transformations.
