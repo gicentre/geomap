@@ -45,7 +45,7 @@ import java.nio.charset.CharsetDecoder;
   * r.close();
   * </pre></code>
   * @author Ian Schneider with minor modifications by Jo Wood.
-  * @version 2.4, 6th January 2012.
+  * @version 2.4, 10th January 2012.
   */
 //  ************************************************************************************************
 
@@ -224,18 +224,6 @@ public class DbaseFileReader
         return entry;
     }
 
-  /*
-   * Transfer, by bytes, the next record to the writer.
-   *
-  public void transferTo(DbaseFileWriter writer) throws IOException {
-      bufferCheck();
-      buffer.limit(buffer.position() + header.getRecordLength());
-      writer.channel.write(buffer);
-      buffer.limit(buffer.capacity());
-      
-      cnt++;
-  }
-  */
 
     /** Copies the next entry into the array.
       * @param entry The array to copy into.
@@ -248,6 +236,203 @@ public class DbaseFileReader
         return readEntry(entry,0,doSimple);
     }
   
+    
+    /** Reports the offset that the given column is from the start of a row.
+     * @param column Column upon which to find offset.
+     * @return Offset that the given column is from start. 
+     */
+    int getOffset(int column) 
+    {
+    	int offset = 0;
+    	for (int i = 0, ii = column; i < ii; i++) 
+    	{
+    		offset += fieldLengths[i];
+    	}
+    	return offset;
+    }
+    
+    /** Reads an object from the database.
+     * @param fieldOffset Offset from the start of the record.
+     * @param fieldNum FieldNum Index identifying the field to read.  
+     * @param doSimple If true, all values will be either strings or numbers. If not, 
+     *                 the record  can contain boolean values and dates as well as
+     *                 strings and numbers. 
+     * @return Object that has been read from database.
+     * @throws IOException If problem reading the object. 
+     */
+   Object readObject(final int fieldOffset,final int fieldNum, boolean doSimple) throws IOException 
+   {
+       final char type = fieldTypes[fieldNum];
+       final int fieldLen = fieldLengths[fieldNum];
+       Object object = null;
+   
+       //System.out.println( charBuffer.subSequence(fieldOffset,fieldOffset + fieldLen));
+   
+       if(fieldLen > 0) 
+       {
+           switch (type)
+           {
+               // (L)logical (T,t,F,f,Y,y,N,n)
+               case 'l':
+               case 'L':
+                   switch (charBuffer.charAt(fieldOffset)) 
+                   {
+                       case 't': case 'T': case 'Y': case 'y':
+                           if (doSimple)
+                           {
+                           	object = new String("true");
+                           }
+                           else
+                           {
+                           	object = Boolean.TRUE;
+                           }
+                           break;
+                           
+                       case 'f': case 'F': case 'N': case 'n':
+                           if (doSimple)
+                           {
+                           	object = new String("false");
+                           }
+                           else
+                           {
+                           	object = Boolean.FALSE;
+                           }
+                           break;
+                       
+                       default:
+                           throw new IOException("Unknown logical value : '" + charBuffer.charAt(fieldOffset) + "'");
+                   }
+                   break;
+         
+               // (C)character (String)
+               case 'c':
+               case 'C':
+                   // oh, this seems like a lot of work to parse strings...but,
+                   // For some reason if zero characters ( (int) char == 0 ) are allowed
+                   // in these strings, they do not compare correctly later on down the
+                   // line....
+                   int start = fieldOffset;
+                   int end = fieldOffset + fieldLen - 1;
+                   // Trim off whitespace and 'zero' chars
+                   while (start < end) 
+                   {
+                       char c = charBuffer.get(start);
+                       if (c== 0 || Character.isWhitespace(c)) 
+                       {
+                           start++;
+                       }
+                       else
+                       {
+                           break;
+                       }
+                   }
+                   while (end > start) 
+                   {
+                       char c = charBuffer.get(end);
+                       if (c == 0 || Character.isWhitespace(c)) 
+                       {
+                           end--;
+                       }
+                       else
+                       {
+                           break; 
+                       }
+                   }
+                   // Set up the new indexes for start and end
+                   charBuffer.position(start).limit(end + 1);
+                   String s = charBuffer.toString();
+                   // This resets the limit...
+                   charBuffer.clear();
+                   object = s;
+                   break;
+                   
+               // (D)date (Date)
+               case 'd':
+               case 'D':
+                   try
+                   {
+                       String tempString = charBuffer.subSequence(fieldOffset,fieldOffset + 4).toString();
+                       int tempYear = Integer.parseInt(tempString);
+                       tempString = charBuffer.subSequence(fieldOffset + 4,fieldOffset + 6).toString();
+                       int tempMonth = Integer.parseInt(tempString) - 1;
+                       tempString = charBuffer.subSequence(fieldOffset + 6,fieldOffset + 8).toString();
+                       int tempDay = Integer.parseInt(tempString);
+                       Calendar cal = Calendar.getInstance();
+                       cal.clear();
+                       cal.set(Calendar.YEAR,tempYear);
+                       cal.set(Calendar.MONTH, tempMonth);
+                       cal.set(Calendar.DAY_OF_MONTH, tempDay);
+                       if (doSimple)
+                       {
+                       	object =cal.getTime().toString();
+                       }
+                       else
+                       {
+                       	object = cal.getTime();
+                       }
+                   }
+                   catch(NumberFormatException nfe)
+                   {
+                       // Do nothing.
+                   }
+                   break;
+         
+               // (F)floating (Double)
+               case 'n':
+               case 'N':
+                   try 
+                   {
+                       if (header.getFieldDecimalCount(fieldNum) == 0) 
+                       {
+                           object = new Integer(numberParser.parseInt(charBuffer, fieldOffset, fieldOffset + fieldLen - 1));
+                           break;
+                       }
+                       // else will fall through to the floating point number
+                   }
+                   catch (NumberFormatException e) 
+                   {
+                       // todo: use progresslistener, this isn't a grave error.
+
+                       // Don't do this!!! the Double parse will be attempted as we fall
+                       // through, so no need to create a new Object. -IanS
+                       // object = new Integer(0);
+         
+                       // Lets try parsing a long instead...
+                       try 
+                       {
+                           object = new Long(numberParser.parseLong(charBuffer,fieldOffset,fieldOffset + fieldLen - 1));
+                           break;
+                       }
+                       catch (NumberFormatException e2) 
+                       {
+                           // Do nothing.
+                       }
+                   }
+         
+                   //$FALL-THROUGH$
+               	case 'f':
+                   case 'F': // floating point number
+                       try 
+                       {
+                           object = new Double(numberParser.parseDouble(charBuffer,fieldOffset, fieldOffset + fieldLen - 1));
+                       }
+                       catch (NumberFormatException e) 
+                       {
+                           // todo: use progresslistener, this isn't a grave error, though it
+                           // does indicate something is wrong
+          
+                           // okay, now whatever we got was truly undigestable. Lets go with
+                           // a zero Double.
+                           object = new Double(0.0);
+                       }
+                       break;
+                       
+                   default:
+                       throw new IOException("Invalid field type : " + type);
+           }
+       } 
+       return object;
+   }
 
     // --------------------------- Private Methods ----------------------------
     
@@ -288,21 +473,7 @@ public class DbaseFileReader
             buffer.position(0);
         }
     }
-  
-    /** Reports the offset that the given column is from the start of a row.
-      * @param column Column upon which to find offset.
-      * @return Offset that the given column is from start. 
-      */
-    private int getOffset(int column) 
-    {
-        int offset = 0;
-        for (int i = 0, ii = column; i < ii; i++) 
-        {
-            offset += fieldLengths[i];
-        }
-        return offset;
-    }
-  
+    
     /** Initialises the reader.
       * @throws IOException If problem initialising the reader. 
       */
@@ -374,190 +545,7 @@ public class DbaseFileReader
             foundRecord = true;
         }
         cnt++;
-    }
-    
-    /** Reads an object from the database.
-      * @param fieldOffset Offset from the start of the record.
-      * @param fieldNum FieldNum Index identifying the field to read.  
-      * @param doSimple If true, all values will be either strings or numbers. If not, 
-      *                 the record  can contain boolean values and dates as well as
-      *                 strings and numbers. 
-      * @return Object that has been read from database.
-      * @throws IOException If problem reading the object. 
-      */
-    private Object readObject(final int fieldOffset,final int fieldNum, boolean doSimple) throws IOException 
-    {
-        final char type = fieldTypes[fieldNum];
-        final int fieldLen = fieldLengths[fieldNum];
-        Object object = null;
-    
-        //System.out.println( charBuffer.subSequence(fieldOffset,fieldOffset + fieldLen));
-    
-        if(fieldLen > 0) 
-        {
-            switch (type)
-            {
-                // (L)logical (T,t,F,f,Y,y,N,n)
-                case 'l':
-                case 'L':
-                    switch (charBuffer.charAt(fieldOffset)) 
-                    {
-                        case 't': case 'T': case 'Y': case 'y':
-                            if (doSimple)
-                            {
-                            	object = new String("true");
-                            }
-                            else
-                            {
-                            	object = Boolean.TRUE;
-                            }
-                            break;
-                            
-                        case 'f': case 'F': case 'N': case 'n':
-                            if (doSimple)
-                            {
-                            	object = new String("false");
-                            }
-                            else
-                            {
-                            	object = Boolean.FALSE;
-                            }
-                            break;
-                        
-                        default:
-                            throw new IOException("Unknown logical value : '" + charBuffer.charAt(fieldOffset) + "'");
-                    }
-                    break;
-          
-                // (C)character (String)
-                case 'c':
-                case 'C':
-                    // oh, this seems like a lot of work to parse strings...but,
-                    // For some reason if zero characters ( (int) char == 0 ) are allowed
-                    // in these strings, they do not compare correctly later on down the
-                    // line....
-                    int start = fieldOffset;
-                    int end = fieldOffset + fieldLen - 1;
-                    // Trim off whitespace and 'zero' chars
-                    while (start < end) 
-                    {
-                        char c = charBuffer.get(start);
-                        if (c== 0 || Character.isWhitespace(c)) 
-                        {
-                            start++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    while (end > start) 
-                    {
-                        char c = charBuffer.get(end);
-                        if (c == 0 || Character.isWhitespace(c)) 
-                        {
-                            end--;
-                        }
-                        else
-                        {
-                            break; 
-                        }
-                    }
-                    // Set up the new indexes for start and end
-                    charBuffer.position(start).limit(end + 1);
-                    String s = charBuffer.toString();
-                    // This resets the limit...
-                    charBuffer.clear();
-                    object = s;
-                    break;
-                    
-                // (D)date (Date)
-                case 'd':
-                case 'D':
-                    try
-                    {
-                        String tempString = charBuffer.subSequence(fieldOffset,fieldOffset + 4).toString();
-                        int tempYear = Integer.parseInt(tempString);
-                        tempString = charBuffer.subSequence(fieldOffset + 4,fieldOffset + 6).toString();
-                        int tempMonth = Integer.parseInt(tempString) - 1;
-                        tempString = charBuffer.subSequence(fieldOffset + 6,fieldOffset + 8).toString();
-                        int tempDay = Integer.parseInt(tempString);
-                        Calendar cal = Calendar.getInstance();
-                        cal.clear();
-                        cal.set(Calendar.YEAR,tempYear);
-                        cal.set(Calendar.MONTH, tempMonth);
-                        cal.set(Calendar.DAY_OF_MONTH, tempDay);
-                        if (doSimple)
-                        {
-                        	object =cal.getTime().toString();
-                        }
-                        else
-                        {
-                        	object = cal.getTime();
-                        }
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        // Do nothing.
-                    }
-                    break;
-          
-                // (F)floating (Double)
-                case 'n':
-                case 'N':
-                    try 
-                    {
-                        if (header.getFieldDecimalCount(fieldNum) == 0) 
-                        {
-                            object = new Integer(numberParser.parseInt(charBuffer, fieldOffset, fieldOffset + fieldLen - 1));
-                            break;
-                        }
-                        // else will fall through to the floating point number
-                    }
-                    catch (NumberFormatException e) 
-                    {
-                        // todo: use progresslistener, this isn't a grave error.
-
-                        // Don't do this!!! the Double parse will be attempted as we fall
-                        // through, so no need to create a new Object. -IanS
-                        // object = new Integer(0);
-          
-                        // Lets try parsing a long instead...
-                        try 
-                        {
-                            object = new Long(numberParser.parseLong(charBuffer,fieldOffset,fieldOffset + fieldLen - 1));
-                            break;
-                        }
-                        catch (NumberFormatException e2) 
-                        {
-                            // Do nothing.
-                        }
-                    }
-          
-                    case 'f':
-                    case 'F': // floating point number
-                        try 
-                        {
-                            object = new Double(numberParser.parseDouble(charBuffer,fieldOffset, fieldOffset + fieldLen - 1));
-                        }
-                        catch (NumberFormatException e) 
-                        {
-                            // todo: use progresslistener, this isn't a grave error, though it
-                            // does indicate something is wrong
-           
-                            // okay, now whatever we got was truly undigestable. Lets go with
-                            // a zero Double.
-                            object = new Double(0.0);
-                        }
-                        break;
-                        
-                    default:
-                        throw new IOException("Invalid field type : " + type);
-            }
-        } 
-        return object;
-    }
-    
+    }   
        
     // --------------------------- Nested classes -----------------------------
   

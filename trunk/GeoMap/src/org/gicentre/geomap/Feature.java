@@ -22,9 +22,18 @@ package org.gicentre.geomap;
  */
 public interface Feature
 {
-
+	/** Should report the type of feature.
+	 *  @return Type of feature
+	 */
+	public abstract FeatureType getType();
+	
     /** Should draw the feature in the parent sketch.
      *  @param transformer Class that will trasform between geographic and screen coordinates.
      */
     public abstract void draw(Geographic transformer);
+    
+    /** Should report the number of vertices that make up the feature definition.
+     *  @return number of vertices that make up the feature.
+     */
+    public abstract int getNumVertices();
 }

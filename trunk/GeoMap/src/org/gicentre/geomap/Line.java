@@ -6,7 +6,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Class for representing and drawing a line feature.
  *  @author Jo Wood , giCentre, City University London.
- *  @version 1.0, 6th January, 2012
+ *  @version 1.0, 10th January, 2012
  */
 // *****************************************************************************************
 
@@ -40,6 +40,42 @@ public class Line implements Feature
         this.y = y;
         this.parent = parent;
     }
+    
+    /** Reports the number of vertices that make up the line feature.
+     *  @return number of vertices that make up the line.
+     */
+    public int getNumVertices()
+    {
+    	if (x != null)
+    	{
+    		return x.length;
+    	}
+    	return 0;
+    }
+    
+    /** Report the type of feature (line).
+	 *  @return Type of feature
+	 */
+	public FeatureType getType()
+	{
+		return FeatureType.LINE;
+	}
+	
+	/** Reports the x coordinates coordinates of the line feature.
+	 *  @return x coordinates of the line feature.
+	 */
+	public float[] getXCoords()
+	{
+		return x;
+	}
+	
+	/** Reports the y coordinates coordinates of the line feature.
+	 *  @return y coordinates of the line feature.
+	 */
+	public float[] getYCoords()
+	{
+		return y;
+	}
 
     /** Draws the line in the parent sketch.
      *  @param transformer Class that handles the geographic to screen transformations.

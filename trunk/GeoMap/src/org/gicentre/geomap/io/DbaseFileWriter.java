@@ -54,18 +54,16 @@ public class DbaseFileWriter
 
 	// --------------------------------- Constructors ---------------------------------
 
-	/** Creates a DbaseFileWriter using the specified header and writing to
-	 * the given channel.
-	 * @param header The DbaseFileHeader to write.
-	 * @param out The channel to write to.
-	 * @throws IOException If errors occur while initializing.
+	/** Creates a DbaseFileWriter using the specified header and writing to the given channel.
+	 *  @param header The DbaseFileHeader to write.
+	 *  @param out The channel to write to.
+	 *  @throws IOException If errors occur while initializing.
 	 */
 	public DbaseFileWriter(DbaseFileHeader header, WritableByteChannel out) throws IOException 
 	{
 		header.writeHeader(out);
 		this.header = header;
 		this.channel = out;
-
 		init();
 	}
 

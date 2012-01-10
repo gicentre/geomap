@@ -23,7 +23,7 @@ import processing.core.PApplet;
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 8th January, 2012.
+ *  @version 3.1, 10th January, 2012.
  */
 //  **************************************************************************************************
 
@@ -54,6 +54,8 @@ public class ShapefileReader
 	
 	private float minX,minY,maxX,maxY;				// Geographic bounds of the file read.
 	
+	private int numPts,numLns,numPlys;		        // Number of features of each type.
+	
 	private static final double ESRI_NODATA = -(10e38);	// Code used by ESRI to indicate no data.
 
 	// ------------------------------------- Constructor ---------------------------------------
@@ -64,6 +66,9 @@ public class ShapefileReader
 	public ShapefileReader(PApplet parent)
 	{
 		this.parent = parent;
+		numPts  = 0;
+		numLns  = 0;
+		numPlys = 0;
 	}
 
 	// --------------------------------------- Methods -----------------------------------------
@@ -104,8 +109,6 @@ public class ShapefileReader
 			// Shape type.
 			int shapeType = readIntLittleEndian(geomInputStream);
 
-			//System.out.println(getShapeTypeText(shapeType));
-
 			// Boundaries            
 			minX = (float)readDoubleLittleEndian(geomInputStream);
 			minY = (float)readDoubleLittleEndian(geomInputStream);
@@ -126,8 +129,8 @@ public class ShapefileReader
 
 				// Record contents
 				shapeType = readIntLittleEndian(geomInputStream);  // Should be the same as file record type
-				// but ESRI say could vary in future versions.    
-				//System.err.println(getShapeTypeText(shapeType));
+																   // but ESRI say could vary in future versions.    
+
 				switch (shapeType)
 				{
 					case 0:     // Null shape record.
@@ -262,6 +265,31 @@ public class ShapefileReader
 		return maxY;
 	}
 	
+	/** Reports the number of point objects that have been read by this reader.
+	 *  @return Number of point objects read.
+	 */
+	public int getNumPoints()
+	{
+		return numPts;
+	}
+	
+	/** Reports the number of line objects that have been read by this reader.
+	 *  @return Number of line objects read.
+	 */
+	public int getNumLines()
+	{
+		return numLns;
+	}
+	
+	/** Reports the number of polygon objects that have been read by this reader.
+	 *  Note that a complex polygon with several parts will be considered a single object.
+	 *  @return Number of polygon objects read.
+	 */
+	public int getNumPolys()
+	{
+		return numPlys;
+	}
+	
 	// ---------------------------------------- Private methods ----------------------------------------
 
 	/** Reads in a big-endian 4-byte integer from the given input stream.
@@ -367,6 +395,7 @@ public class ShapefileReader
 		}
 
 		features.put(new Float(attribute),point);
+		numPts++;
 	}
 
 	/** Adds a set of point objects to the geoMap from the given input stream.
@@ -434,6 +463,7 @@ public class ShapefileReader
 			}
 
 			features.put(new Float(attribute),point);
+			numPoints++;
 		}
 	}
 
@@ -447,15 +477,15 @@ public class ShapefileReader
 		skip(inStream,32);
 
 		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
-
+		int numVertices = readIntLittleEndian(inStream);
+		
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i);
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of vertices in shapefile "+numVertices+". Ignoring part "+i);
 				numParts = i;
 			}
 		}
@@ -468,7 +498,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -498,6 +528,7 @@ public class ShapefileReader
 		if (poly != null)
 		{
 			features.put(new Float(recordNumber),poly);
+			numPlys++;
 		}
 	}
 
@@ -510,16 +541,16 @@ public class ShapefileReader
 		// Skip bounding box info.
 		skip(inStream,32);
 
-		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
+		int numParts    = readIntLittleEndian(inStream);
+		int numVertices = readIntLittleEndian(inStream);
 
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i+" in polyZ");
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numVertices+". Ignoring part "+i+" in polyZ");
 				numParts = i;
 			}
 		}
@@ -533,7 +564,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -572,11 +603,12 @@ public class ShapefileReader
 
 		// Skip the remaining measure values.
 		skip(inStream,16);				// measure range
-		skip(inStream,numPoints*8);		// measure values
+		skip(inStream,numVertices*8);	// measure values
 		
 		if (poly != null)
 		{
 			features.put(new Float(recordNumber),poly);
+			numPlys++;
 		}
 	}
 	
@@ -589,16 +621,16 @@ public class ShapefileReader
 		// Skip bounding box info.
 		skip(inStream,32);
 
-		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
+		int numParts    = readIntLittleEndian(inStream);
+		int numVertices = readIntLittleEndian(inStream);
 
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i+" in polyM");
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numVertices+". Ignoring part "+i+" in polyM");
 				numParts = i;
 			}
 		}
@@ -612,7 +644,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -652,6 +684,7 @@ public class ShapefileReader
 		if (poly != null)
 		{
 			features.put(new Float(recordNumber),poly);
+			numPlys++;
 		}
 	}
 
@@ -664,16 +697,16 @@ public class ShapefileReader
 		// Skip bounding box info.
 		skip(inStream,32);
 
-		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
+		int numParts    = readIntLittleEndian(inStream);
+		int numVertices = readIntLittleEndian(inStream);
 
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i+" in polyLine");
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numVertices+". Ignoring part "+i+" in polyLine");
 				numParts = i;
 			}
 		}
@@ -685,7 +718,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -701,7 +734,8 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 
-			features.put(new Float(recordNumber),new Line(x,y,parent));	
+			features.put(new Float(recordNumber),new Line(x,y,parent));
+			numLns++;
 			currentPos += pointsInPart;
 		}
 	}
@@ -715,16 +749,16 @@ public class ShapefileReader
 		// Skip bounding box info.
 		skip(inStream,32);
 
-		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
+		int numParts    = readIntLittleEndian(inStream);
+		int numVertices = readIntLittleEndian(inStream);
 
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i+" in PolyLineZ");
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numVertices+". Ignoring part "+i+" in PolyLineZ");
 				numParts = i;
 			}
 		}
@@ -737,7 +771,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -753,7 +787,8 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 			numCoords += pointsInPart;
-			features.put(new Float(recordNumber),new Line(x,y,parent));	
+			features.put(new Float(recordNumber),new Line(x,y,parent));
+			numLns++;
 			currentPos += pointsInPart;
 		}
 		
@@ -768,7 +803,7 @@ public class ShapefileReader
 
 		// Skip the remaining measure values.
 		skip(inStream,16);				// measure range
-		skip(inStream,numPoints*8);		// measure values
+		skip(inStream,numVertices*8);	// measure values
 	}
 
 	
@@ -782,15 +817,15 @@ public class ShapefileReader
 		skip(inStream,32);
 
 		int numParts  = readIntLittleEndian(inStream);
-		int numPoints = readIntLittleEndian(inStream);
+		int numVertices = readIntLittleEndian(inStream);
 
 		int[] partIndex = new int[numParts];     
 		for (int i=0; i<numParts; i++)
 		{
 			partIndex[i] = readIntLittleEndian(inStream);
-			if (partIndex[i] >= numPoints)
+			if (partIndex[i] >= numVertices)
 			{
-				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numPoints+". Ignoring part "+i+" in PolyLineM");
+				System.err.println("Warning: Part index "+partIndex[i]+" greater than number of points in shapefile "+numVertices+". Ignoring part "+i+" in PolyLineM");
 				numParts = i;
 			}
 		}
@@ -803,7 +838,7 @@ public class ShapefileReader
 		{
 			if (part == numParts-1)  // Last part in list.
 			{
-				pointsInPart = numPoints-currentPos;
+				pointsInPart = numVertices-currentPos;
 			}
 			else
 			{
@@ -819,7 +854,8 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 			numCoords += pointsInPart;
-			features.put(new Float(recordNumber),new Line(x,y,parent));	
+			features.put(new Float(recordNumber),new Line(x,y,parent));
+			numLns++;
 			currentPos += pointsInPart;
 		}
 		

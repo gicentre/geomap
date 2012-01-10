@@ -9,7 +9,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Class for representing a table of attributes suitable for querying.
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by Jo Wood.
- *  @version 2.2, 8th January, 2012.
+ *  @version 2.2, 10th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -59,6 +59,7 @@ public class Table
 				data[row][col] = new String();
 			}
 		}
+		rowCount = numRows;
 	}
 
 	/** Creates a table from the given tab separated values file.
@@ -119,6 +120,14 @@ public class Table
 	public void setHeadings(String[] headings)
 	{
 		this.header = headings;
+	}
+	
+	/** Reports the column headings for the table.
+	 *  @return Text headings for each column in the table.
+	 */
+	public String[] getHeadings()
+	{
+		return header;
 	}
 
 	/** Reports the number of rows in the table.
@@ -294,6 +303,44 @@ public class Table
 		data[rowIndex][column] = PApplet.str(what);
 	}
 	
+	/** Calculates the maximium widths of the attributes in each column. A width is the number
+	 *  of characters in a cell.
+	 *  @return Maximum width of each of the columns in the table.
+	 */
+	public int[] calcMaxWidths()
+	{
+		// Find number of columns. Since the table could be ragged, need to check each row.
+		int numCols = 0;
+		if (header != null)
+		{
+			numCols = header.length;
+		}
+		
+		for (int row=0; row<data.length; row++)
+		{
+			numCols = Math.max(numCols, data[row].length);
+		}
+		
+		// Find the maximum number of characters in each column.
+		int[] maxWidths = new int[numCols];
+		if (header != null)
+		{
+			for (int col=0; col<header.length; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], header[col].length());
+			}
+		}
+		for (int row=0; row<data.length; row++)
+		{
+			for (int col=0; col<data[row].length; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], data[row][col].length());
+			}
+		}
+		
+		return maxWidths;
+	}
+	
 	/** Writes this table in TSV format to standard output.
 	 */
 	public void write() 
@@ -366,35 +413,8 @@ public class Table
 	public void writeAsTable(PrintWriter writer, int maxNumRows) 
 	{
 		int numRows = Math.min(maxNumRows, data.length);
-
-		// Find out the number of columns.
-		int numCols = 0;
-		if (header != null)
-		{
-			numCols = header.length;
-		}
-		
-		for (int row=0; row<numRows; row++)
-		{
-			numCols = Math.max(numCols, data[row].length);
-		}
-
-		// Find the maximum number of characters in each column.
-		int[] maxWidths = new int[numCols];
-		if (header != null)
-		{
-			for (int col=0; col<header.length; col++)
-			{
-				maxWidths[col] = Math.max(maxWidths[col], header[col].length());
-			}
-		}
-		for (int row=0; row<numRows; row++)
-		{
-			for (int col=0; col<data[row].length; col++)
-			{
-				maxWidths[col] = Math.max(maxWidths[col], data[row][col].length());
-			}
-		}
+		int[] maxWidths = calcMaxWidths();
+		int numCols = maxWidths.length;
 
 		int totalWidth = numCols+1;
 		for (int col=0; col<maxWidths.length; col++)
