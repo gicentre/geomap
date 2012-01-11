@@ -55,6 +55,7 @@ public class ShapefileTest extends PApplet
 		size(800,400);
 		smooth();
 		zoomer = new ZoomPan(this);
+		textFont(createFont("Sans-serif", 20));
 
 		geoMap = new GeoMap(this);
 		geoMap.readFile("world");
@@ -68,7 +69,10 @@ public class ShapefileTest extends PApplet
 	public void draw()
 	{   
 		background(180,210,240);
+		pushMatrix();
 		zoomer.transform();
+		
+		// Draw entire map.
 		fill(150,190,150);
 		strokeWeight(0.1f);
 		stroke(0,100);
@@ -81,12 +85,24 @@ public class ShapefileTest extends PApplet
 		// Allow mouse to highlight countries.
 		PVector zoomedCoords = zoomer.getMouseCoord();
 		int id = geoMap.getID(zoomedCoords.x, zoomedCoords.y);
-		
+		String name = null;	
 		if (id != -1)
 		{
-			fill(180,20,20);
+			fill(120,150,120);
 			strokeWeight(1);
 			geoMap.draw(id);
+			
+			// Full country name stored in column 3 (4th column) of the attribute table
+			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
+		}
+		
+		popMatrix();
+		
+		// Display country name if it has been selected.
+		if (name != null)
+		{
+			fill(0,200);
+			text(name,15,20);
 		}
 	}
 }
