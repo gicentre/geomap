@@ -1,7 +1,7 @@
 package org.gicentre.geomap;
 
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.gicentre.geomap.io.ShapefileReader;
@@ -13,7 +13,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for drawing geographic maps in Processing
  *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.0, 10th January, 2012
+ *  @version 1.0, 11th January, 2012
  */
 // *****************************************************************************************
 
@@ -38,7 +38,7 @@ public class GeoMap implements Geographic
     private float minGeoX, maxGeoX;                        // The minimum and maximum geographic values in the x direction.
     private float minGeoY, maxGeoY;                        // Minimum and maximum geographic values in the y direction.
     private float xOrigin, yOrigin, mapWidth, mapHeight;   // The bounds of the map in screen coordinates.
-    private Map<Float, Feature> features;                  // The key/value pair for each feature.
+    private Map<Integer, Feature> features;                // The key/value pair for each feature.
     private Table attributes;							   // Attribute table associated with feature collection.
     private int numPoints,numLines,numPolys;			   // Number of features of each type.
     private int numLineVertices, numPolygonVertices;	   // Total number of vertices in all features.
@@ -74,7 +74,7 @@ public class GeoMap implements Geographic
         this.maxGeoX    = xOrigin+mapWidth;
         this.minGeoY    = yOrigin;
         this.maxGeoY    = yOrigin+mapHeight;	
-        this.features   = new HashMap<Float, Feature>();
+        this.features   = new LinkedHashMap<Integer, Feature>();
         this.attributes = new Table(0,0,parent);
         this.numPoints  = 0;
         this.numLines   = 0;
@@ -94,6 +94,13 @@ public class GeoMap implements Geographic
         {
         	feature.draw(this);
         }
+    }
+    
+    /** Draws all features in the map that match the given attribute.
+     */
+    public void draw(Object attribute)
+    {
+    	features.get(new Integer(attribute.toString())).draw(this);
     }
     
     /** Should provide the screen coordinates corresponding to the given geographic coordinates.
@@ -233,7 +240,7 @@ public class GeoMap implements Geographic
 	/** Reports the collection of features that make up this geoMap object.
 	 *  @return Collection of features each addressable by some unique ID.
 	 */
-	public Map<Float,Feature> getFeatures()
+	public Map<Integer,Feature> getFeatures()
 	{
 		return features;
 	}
@@ -244,6 +251,14 @@ public class GeoMap implements Geographic
 	public Table getAttributes()
 	{
 		return attributes;
+	}
+	
+	/** Sets the attribute table to be associated with this geoMap object.
+	 *  @param attributes New attribute table to be associated with this geoMap.
+	 */
+	public void setAttributes(Table attributes)
+	{
+		this.attributes = attributes;
 	}
 	
 	/** Reports the minimum geographic coordinate in the x-direction.

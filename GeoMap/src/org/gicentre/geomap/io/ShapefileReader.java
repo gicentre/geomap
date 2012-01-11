@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.gicentre.geomap.Feature;
@@ -23,7 +23,7 @@ import processing.core.PApplet;
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 10th January, 2012.
+ *  @version 3.1, 11th January, 2012.
  */
 //  **************************************************************************************************
 
@@ -47,7 +47,7 @@ public class ShapefileReader
 	private long filePointer;						// Keeps track of read position in binary file.
 	private int recordNumber;						// ID of each record in the shapefile.
 
-	private HashMap<Float, Feature>features;		// Stores feature geometry.
+	private LinkedHashMap<Integer, Feature>features;// Stores feature geometry.
 	private Table attributes;						// Stores feature attributes.
 	
 	private PApplet parent;							// Parent sketch.
@@ -81,7 +81,7 @@ public class ShapefileReader
 	public boolean read(InputStream geomInputStream, InputStream dbInputStream)
 	{ 
 		filePointer = 0;
-		features = new HashMap<Float, Feature>();     
+		features = new LinkedHashMap<Integer, Feature>();     
 
 		int fileSize;
 
@@ -220,7 +220,7 @@ public class ShapefileReader
 	/** Provides the features that have been extracted from the shapefile.
 	 *  @return Map that contains the features indexed by ID.
 	 */
-	public Map<Float,Feature>getFeatures()
+	public Map<Integer,Feature>getFeatures()
 	{
 		return features;
 	}
@@ -363,15 +363,13 @@ public class ShapefileReader
 	/** Adds a point object to the geoMap from the given input stream.
 	 *  @param inStream Input stream containing shapefile.
 	 *  @param readZ Reads a z value if true.
-	 *  @param readM Reads a measure if true.
+	 *  @param readM Reads a measure if true. Note the measure value is not currently stored.
 	 */
 	private void addPoint(InputStream inStream, boolean readZ, boolean readM)
 	{
 		float x = (float)readDoubleLittleEndian(inStream);
 		float y = (float)readDoubleLittleEndian(inStream);
-
-		float attribute = recordNumber,
-		z=0;
+		float z=0;
 
 		if (readZ)
 		{
@@ -380,7 +378,8 @@ public class ShapefileReader
 
 		if (readM)
 		{
-			attribute = readMeasure(inStream);
+			// NOTE: Measure currently ignored.
+			readMeasure(inStream);
 		}
 
 		Point point;
@@ -394,14 +393,14 @@ public class ShapefileReader
 			point = new Point(x,y,parent);
 		}
 
-		features.put(new Float(attribute),point);
+		features.put(new Integer(recordNumber),point);
 		numPts++;
 	}
 
 	/** Adds a set of point objects to the geoMap from the given input stream.
 	 *  @param inStream Input stream containing shapefile.
 	 *  @param readZ Reads a z value if true.
-	 *  @param readM Reads a measure if true.
+	 *  @param readM Reads a measure if true. NOTE: measure value not currently stored.
 	 */
 	@SuppressWarnings("null")
 	private void addMultiPoint(InputStream inStream, boolean readZ, boolean readM)
@@ -444,15 +443,9 @@ public class ShapefileReader
 		}
 
 		// Store the points.
-		float attribute = recordNumber;
 		for (int i=0; i<numPoints; i++)
 		{
 			Point point;
-
-			if (readM)
-			{
-				attribute = m[i];
-			}
 			if (readZ)
 			{
 				point = new Point(x[i],y[i],z[i], parent);
@@ -462,11 +455,10 @@ public class ShapefileReader
 				point = new Point(x[i],y[i],parent);
 			}
 
-			features.put(new Float(attribute),point);
+			features.put(new Integer(recordNumber),point);
 			numPoints++;
 		}
 	}
-
 
 	/** Adds a polygon object to the geoMap collection from the given input stream.
 	 *  @param inStream Input stream containing shapefile.
@@ -527,7 +519,7 @@ public class ShapefileReader
 
 		if (poly != null)
 		{
-			features.put(new Float(recordNumber),poly);
+			features.put(new Integer(recordNumber),poly);
 			numPlys++;
 		}
 	}
@@ -607,7 +599,7 @@ public class ShapefileReader
 		
 		if (poly != null)
 		{
-			features.put(new Float(recordNumber),poly);
+			features.put(new Integer(recordNumber),poly);
 			numPlys++;
 		}
 	}
@@ -683,7 +675,7 @@ public class ShapefileReader
 		
 		if (poly != null)
 		{
-			features.put(new Float(recordNumber),poly);
+			features.put(new Integer(recordNumber),poly);
 			numPlys++;
 		}
 	}
@@ -734,7 +726,7 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 
-			features.put(new Float(recordNumber),new Line(x,y,parent));
+			features.put(new Integer(recordNumber),new Line(x,y,parent));
 			numLns++;
 			currentPos += pointsInPart;
 		}
@@ -787,7 +779,7 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 			numCoords += pointsInPart;
-			features.put(new Float(recordNumber),new Line(x,y,parent));
+			features.put(new Integer(recordNumber),new Line(x,y,parent));
 			numLns++;
 			currentPos += pointsInPart;
 		}
@@ -854,7 +846,7 @@ public class ShapefileReader
 				y[coord] = (float)readDoubleLittleEndian(inStream);
 			}
 			numCoords += pointsInPart;
-			features.put(new Float(recordNumber),new Line(x,y,parent));
+			features.put(new Integer(recordNumber),new Line(x,y,parent));
 			numLns++;
 			currentPos += pointsInPart;
 		}

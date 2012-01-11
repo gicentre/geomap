@@ -9,7 +9,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Class for representing a table of attributes suitable for querying.
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by Jo Wood.
- *  @version 2.2, 10th January, 2012.
+ *  @version 2.2, 11th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -33,6 +33,7 @@ public class Table
 	private String[] header;		// Column headings.
 	private String[][] data;		// All data stored as strings.
 	private int rowCount;			// Number of rows in the table.
+	private PApplet parent;			// Parent sketch used for reading and writing files.
 
 	// ----------------------------------- Constructors -----------------------------------
 
@@ -51,6 +52,7 @@ public class Table
 	 */
 	public Table(int numRows, int numCols, PApplet parent) 
 	{
+		this.parent = parent;
 		data = new String[numRows][numCols];
 		for (int row=0; row<data.length; row++)
 		{
@@ -67,6 +69,7 @@ public class Table
 	 */
 	public Table(String filename, PApplet parent) 
 	{
+		this.parent = parent;
 		String[] rows = parent.loadStrings(filename);
 
 		if (rows == null)
@@ -91,6 +94,7 @@ public class Table
 			{
 				continue;     // Skip empty rows
 			}
+
 			if (rows[i].trim().startsWith("#"))
 			{
 				if (header == null)
@@ -172,11 +176,18 @@ public class Table
 	 */
 	public String getString(int rowIndex, int column)
 	{
-		if (rowIndex < 0)
+		if ((rowIndex < 0) || (rowIndex >= data.length))
 		{
-			System.err.println("Unknown row index: "+rowIndex+" when querying table.");
+			System.err.println("Unknown row: "+rowIndex+" when querying table.");
 			return "";
 		}
+		
+		if ((column < 0) || (column >= data[rowIndex].length))
+		{
+			System.err.println("Unknown column: "+column+" when querying row "+rowIndex+" in table.");
+			return "";
+		}
+
 		return data[rowIndex][column];
 	}
 
@@ -348,6 +359,14 @@ public class Table
 		write(new PrintWriter(new OutputStreamWriter(System.out)));
 	}
 
+	/** Writes this table as a TSV file with the given name.
+	 *  @param fileName Name of file to contain the TSV output.
+	 */
+	public void write(String fileName) 
+	{
+		write(parent.createWriter(fileName));
+	}
+	
 	/** Writes this table as a TSV file to the given writer.
 	 *  @param writer Output writer in which to send table contents.
 	 */
@@ -394,8 +413,7 @@ public class Table
 		}
 		writer.flush();
 	}
-
-
+	
 	/** Writes this table as formatted text to standard output. This is designed for producing 'pretty'
 	 *  text output so table can be examined more easily.
 	 *  @param maxNumRows Maximum number of rows of the table to display.
@@ -405,10 +423,20 @@ public class Table
 		writeAsTable(new PrintWriter(new OutputStreamWriter(System.out)),maxNumRows);
 	}
 	
+	/** Writes this table as formatted text to the file with the given name. This is designed for producing 
+	 *  'pretty' text output so table can be examined more easily.
+	 *  @param fileName Name of file to contain the formatted output.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
+	 */
+	public void writeAsTable (String fileName, int maxNumRows) 
+	{
+		writeAsTable(parent.createWriter(fileName), maxNumRows);
+	}
+	
 	/** Writes this table as formatted text to the given writer. This is designed for producing 'pretty'
 	 *  text output so table can be examined more easily.
-	 *  @param maxNumRows Maximum number of rows of the table to display.
 	 *  @param writer Output writer in which to send table contents.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
 	 */
 	public void writeAsTable(PrintWriter writer, int maxNumRows) 
 	{
