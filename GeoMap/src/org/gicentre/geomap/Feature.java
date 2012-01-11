@@ -36,4 +36,13 @@ public interface Feature
      *  @return number of vertices that make up the feature.
      */
     public abstract int getNumVertices();
+    
+    /** Should tests whether the given point is contained within the feature. The definition
+     *  of 'contains' will depend on what type of feature is being tested. Coordinates should
+     *  be in the same geographic units as the feature.
+     *  @param x x coordinate in geographic coordinates.
+     *  @param y y coordinate in geographic coordinates.
+     *  @return True if the given point is contained within the feature, false if not.
+     */
+    public abstract boolean contains(float x, float y);
 }

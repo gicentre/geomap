@@ -3,6 +3,7 @@ package org.gicentre.geomap;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.gicentre.geomap.io.ShapefileReader;
 import org.gicentre.geomap.io.ShapefileWriter;
@@ -96,11 +97,52 @@ public class GeoMap implements Geographic
         }
     }
     
-    /** Draws all features in the map that match the given attribute.
+    /** Draws the feature that matches the given id.
+     * @param id ID of feature to draw.
      */
-    public void draw(Object attribute)
+    public void draw(int id)
     {
-    	features.get(new Integer(attribute.toString())).draw(this);
+    	features.get(new Integer(id)).draw(this);
+    }
+    
+    /** Draws all features that match the given attribute stored in the given column of
+     *  the attribute table. If not features are found or the given column is out of bounds,
+     *  nothing is drawn
+     *  @param attribute Attribute identifying features to draw.
+     *  @param col Column in the attribute table (where ID is column 0) to search.
+     */
+    public void draw(String attribute, int col)
+    {
+    	Set<Integer> ids = attributes.match(attribute, col);
+    	for (Integer id : ids)
+    	{
+    		features.get(id).draw(this);
+    	}
+    }
+    
+    /** Reports the ID of the feature at the given location in screen coordinates or -1
+     *  if no feature found.
+     *  @param screenX x-coordinate of screen location to query.
+     *  @param screenY y-coordinate of screen location to query.
+     *  @return ID of feature at given coordinates or -1 if no feature found.
+     */
+    public int getID(float screenX, float screenY)
+    {
+    	// Convert screen to geographic coordinates before testing for containment.
+    	PVector geo = screenToGeo(screenX, screenY);
+    	
+    	for (Integer id : features.keySet())
+    	{
+    		Feature feature = features.get(id);
+    	
+    		if (feature.contains(geo.x,geo.y))
+    		{
+    			return id.intValue();
+    		}
+    	}
+    	
+    	// No matches if we get to this stage.
+    	return -1;
     }
     
     /** Should provide the screen coordinates corresponding to the given geographic coordinates.
@@ -170,8 +212,6 @@ public class GeoMap implements Geographic
     			numPolygonParts += ((Polygon)feature).getSubPartPointers().size();
     		}
     	}
-    	
-    	//attributes.writeAsTable(10);
     }
     
     /** Writes geometry and attributes of this geoMap object as a shapefile.

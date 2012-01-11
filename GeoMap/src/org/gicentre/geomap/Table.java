@@ -2,6 +2,8 @@ package org.gicentre.geomap;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -189,6 +191,24 @@ public class Table
 		}
 
 		return data[rowIndex][column];
+	}
+	
+	/** Reports the ids of all items in the given column that match the given text
+	 *  @param attribute Text to search for.
+	 *  @param col Column in table to search.
+	 *  @return List of ids corresponding to matched text. Will be an empty list if no matches found.
+	 */
+	public Set<Integer> match(String attribute, int col)
+	{
+		HashSet<Integer>matches = new HashSet<Integer>();
+		for (int row=0; row<rowCount; row++)
+		{
+			if (attribute.equals(getString(row,col)))
+			{
+				matches.add(new Integer(getString(row, 0)));
+			}
+		}
+		return matches;
 	}
 
 	/** Reports the item in the given column and row with the given name as a String.
