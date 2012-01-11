@@ -26,9 +26,14 @@ import processing.core.PVector;
 
 public class Point implements Feature
 {
+	// ---------------------------- Object and class variables ----------------------------
+	
 	private PVector p;				// Coordinates of the point.
     private PApplet parent;			// Parent sketch.
-
+  
+    private static float tolDistSq;	// Squared tolerance distance used for point matching.
+    
+    // ----------------------------------- Constructors -----------------------------------
 
     /** Constructs a new point object with the given 2d geometry.
      *  @param x x coordinates of the point.
@@ -39,6 +44,7 @@ public class Point implements Feature
     {
         this.parent = parent;
         p = new PVector(x,y);
+        tolDistSq = 0;
     }
     
     /** Constructs a new point object with the given 3d geometry.
@@ -51,7 +57,10 @@ public class Point implements Feature
     {
         this.parent = parent;
         p = new PVector(x,y,z);
+        tolDistSq = 0;
     }
+    
+    // ------------------------------------- Methods -------------------------------------
     
     /** Reports the number of vertices that make up the point definition.
      *  @return number of vertices that make up the point. This will always be 1.
@@ -86,6 +95,16 @@ public class Point implements Feature
     	parent.point(screenCoord.x, screenCoord.y);
     }   
     
+    /** Sets the tolerance values used for contains() testing. Any location within a distance of 
+     *  the given tolerance of this point is considered to be at the same location. Note that
+     *  this method is static, meaning that a single tolerance value is shared by all point objects.
+     *  @param tolerance Tolerance distance in the same units as the point's coordinates.
+     */
+    public static void setTolerance(float tolerance)
+    {
+    	Point.tolDistSq = tolerance*tolerance;
+    }
+    
     /** Tests whether the given location matches this point. Coordinates should be in the
      *  same geographic units as the point feature.
      *  @param x x coordinate in geographic coordinates.
@@ -94,7 +113,11 @@ public class Point implements Feature
      */
     public boolean contains(float x, float y)
     {
-    	// TODO: Add matching code.
+    	float distSq = (x-p.x)*(x-p.x) + (y-p.y)*(y-p.y);
+    	if (distSq <= tolDistSq)
+    	{
+    		return true;
+    	}
     	return false;
     }
 }

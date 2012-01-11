@@ -1,5 +1,7 @@
 package org.gicentre.geomap;
 
+import java.awt.geom.Line2D;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -26,9 +28,14 @@ import processing.core.PVector;
 
 public class Line implements Feature
 {
+	// ---------------------------- Object and class variables ----------------------------
+	
 	private float[] x,y;			// Coordinates of the line.
     private PApplet parent;			// Parent sketch.
+    private static float tolDistSq;	// Squared tolerance distance used for line-point matching.
 
+    // ------------------------------------ Constructor -----------------------------------
+    
     /** Constructs a new line object with the given geometry.
      *  @param x x coordinates of the line.
      *  @param y y coordinates of the line.
@@ -39,7 +46,10 @@ public class Line implements Feature
     	this.x = x;
         this.y = y;
         this.parent = parent;
+        tolDistSq = 0;
     }
+    
+    // ------------------------------------- Methods -------------------------------------
     
     /** Reports the number of vertices that make up the line feature.
      *  @return number of vertices that make up the line.
@@ -91,15 +101,32 @@ public class Line implements Feature
     	}
     }   
     
+    /** Sets the tolerance values used for contains() testing. Any location within a distance of 
+     *  the given tolerance of this line is considered to be contained within it. Note that
+     *  this method is static, meaning that a single tolerance value is shared by all line objects.
+     *  @param tolerance Tolerance distance in the same units as the line's coordinates.
+     */
+    public static void setTolerance(float tolerance)
+    {
+    	Line.tolDistSq = tolerance*tolerance;
+    }
+    
     /** Tests whether the given point is located somewhere along the line feature. Coordinates 
-     *  should be in the same geographic units as the feature.
-     *  @param x x coordinate in geographic coordinates.
-     *  @param y y coordinate in geographic coordinates.
+     *  should be in the same geographic units as the line.
+     *  @param px x coordinate in geographic coordinates.
+     *  @param py y coordinate in geographic coordinates.
      *  @return True if the given point is located along the line feature, false if not.
      */
-    public boolean contains(float x, float y)
+    public boolean contains(float px, float py)
     {
-    	// TODO Add testing code here.
+    	for (int i=0; i<x.length-1; i++)
+    	{
+    		Line2D.Float segment = new Line2D.Float(x[i], y[i], x[i+1],y[i+1]);
+    		if (segment.ptSegDistSq(px,py) <= tolDistSq)
+    		{
+    			return true;
+    		}		
+    	}
     	return false;
     }
 }

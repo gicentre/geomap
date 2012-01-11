@@ -57,7 +57,7 @@ public class ShapefileReader
 	private int numPts,numLns,numPlys;		        // Number of features of each type.
 	
 	private static final double ESRI_NODATA = -(10e38);	// Code used by ESRI to indicate no data.
-
+	
 	// ------------------------------------- Constructor ---------------------------------------
 
 	/** Creates a shapefile reader that will scale any geographic data read to be within the given bounds.
