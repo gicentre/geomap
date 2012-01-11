@@ -900,7 +900,6 @@ public class ShapefileReader
 			attributes.setHeadings(headings);
 			int id = 1;
 			
-
 			// Read in row at a time.
 			while (reader.hasNext()) 
 			{      

@@ -247,26 +247,20 @@ public class Polygon implements Feature
 	}
 
     /** Tests whether the given point is contained within the polygon.
-     *  @param x x coordinate in geographic coordinates.
-     *  @param y y coordinate in geographic coordinates.
+     *  @param geoX x coordinate in geographic coordinates.
+     *  @param geoY y coordinate in geographic coordinates.
      *  @return True if the given point is contained within the polygon, false if not.
      */
-    public boolean contains(float x, float y)
+    public boolean contains(float geoX, float geoY)
     {
         // Path coordinates may be subject to transformation on display, so
         // transform geometry before testing for containment.
-        float[] m = ((PMatrix2D) parent.getMatrix()).get(new float[6]);
-        AffineTransform affine = new AffineTransform(m[0], m[3], m[1], m[4], m[2], m[5]);
-        return path.createTransformedShape(affine).contains(x, y);
-    }
-
-    /** Tests whether the given point is contained within the polygon.
-     *  @param location of the point to test in geographic coordinates.
-     *  @return True if the given point is contained within the polygon, false if not.
-     */
-    public boolean contains(PVector location)
-    {
-        return contains(location.x, location.y);
+        //float[] m = ((PMatrix2D) parent.getMatrix()).get(new float[6]);
+        //AffineTransform affine = new AffineTransform(m[0], m[3], m[1], m[4], m[2], m[5]);
+        //return path.createTransformedShape(affine).contains(x, y);
+    	
+    	// The code above is no longer needed since the comparison is calculated in geographic units. 
+    	return path.contains(geoX, geoY);
     }
     
     // --------------------------------------- Private methods --------------------------------------- 

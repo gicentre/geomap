@@ -85,4 +85,16 @@ public class Point implements Feature
     	PVector screenCoord = transformer.geoToScreen(p.x, p.y);
     	parent.point(screenCoord.x, screenCoord.y);
     }   
+    
+    /** Tests whether the given location matches this point. Coordinates should be in the
+     *  same geographic units as the point feature.
+     *  @param x x coordinate in geographic coordinates.
+     *  @param y y coordinate in geographic coordinates.
+     *  @return True if the given point matches this point, false if not.
+     */
+    public boolean contains(float x, float y)
+    {
+    	// TODO: Add matching code.
+    	return false;
+    }
 }

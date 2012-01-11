@@ -90,4 +90,16 @@ public class Line implements Feature
     		p1 = p2;
     	}
     }   
+    
+    /** Tests whether the given point is located somewhere along the line feature. Coordinates 
+     *  should be in the same geographic units as the feature.
+     *  @param x x coordinate in geographic coordinates.
+     *  @param y y coordinate in geographic coordinates.
+     *  @return True if the given point is located along the line feature, false if not.
+     */
+    public boolean contains(float x, float y)
+    {
+    	// TODO Add testing code here.
+    	return false;
+    }
 }
