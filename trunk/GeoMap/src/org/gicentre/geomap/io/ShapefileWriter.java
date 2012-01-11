@@ -190,7 +190,14 @@ public class ShapefileWriter
 					System.err.println("Maximum label length is 254 characters in length. Some labels in column "+(i+1)+" in attribute table will be truncated during shapefile output.");
 					maxWidths[i] = 254;
 				}
-				header.addColumn(headings[i].substring(0, Math.min(254,headings[i].length())), 'C', maxWidths[i], 0);
+				if (headings == null)
+				{
+					header.addColumn(Integer.toString(i+1), 'C', maxWidths[i], 0);
+				}
+				else
+				{
+					header.addColumn(headings[i].substring(0, Math.min(254,headings[i].length())), 'C', maxWidths[i], 0);
+				}
 			}
 			header.setNumRecords(attributes.getRowCount());
 
@@ -300,14 +307,16 @@ public class ShapefileWriter
 			{
 				int recordLength = 10;  // All point records are the same length.
 
-				for (Feature feature : geoMap.getFeatures().values())
+				for (Integer key : geoMap.getFeatures().keySet())
 				{
+					Feature feature = geoMap.getFeatures().get(key);
+					
 					if (feature.getType() == FeatureType.POINT)
 					{
 						Point point = (Point)feature;
 
 						// Record header.
-						writeIntBigEndian(recordNumber,geomOut);
+						writeIntBigEndian(key.intValue(),geomOut);
 						writeIntBigEndian(recordLength,geomOut);
 
 						// Add index record.
@@ -325,8 +334,10 @@ public class ShapefileWriter
 			}
 			else if (type == FeatureType.LINE)
 			{
-				for (Feature feature : geoMap.getFeatures().values())
+				for (Integer key : geoMap.getFeatures().keySet())
 				{
+					Feature feature = geoMap.getFeatures().get(key);
+					
 					if (feature.getType() == FeatureType.LINE)
 					{
 						Line line = (Line)feature;
@@ -334,7 +345,7 @@ public class ShapefileWriter
 						int recordLength = 2 + 16 + 2 + 2 + 2 + numCoords*8;
 
 						// Record header.
-						writeIntBigEndian(recordNumber,geomOut);
+						writeIntBigEndian(key.intValue(),geomOut);
 						writeIntBigEndian(recordLength,geomOut);
 
 						// Add index record.
@@ -368,12 +379,14 @@ public class ShapefileWriter
 			}
 			else if (type == FeatureType.POLYGON)
 			{
-				for (Feature feature : geoMap.getFeatures().values())
+				for (Integer key : geoMap.getFeatures().keySet())
 				{
+					Feature feature = geoMap.getFeatures().get(key);
+					
 					if (feature.getType() == FeatureType.POLYGON)
 					{
 						Polygon poly = (Polygon)feature;
-						
+												
 						int numCoords = poly.getNumVertices();
 						int numParts  = poly.getSubPartPointers().size();					
 						float x[]   = poly.getXCoords();
@@ -382,7 +395,7 @@ public class ShapefileWriter
 						int recordLength = 2 + 16 + 2 + 2 + numParts*2 + numCoords*8;
 
 						// Record header.
-						writeIntBigEndian(recordNumber,geomOut);
+						writeIntBigEndian(key.intValue(),geomOut);
 						writeIntBigEndian(recordLength,geomOut);
 
 						// Add index record.

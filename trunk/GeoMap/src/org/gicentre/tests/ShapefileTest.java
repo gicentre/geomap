@@ -1,14 +1,14 @@
 package org.gicentre.tests;
 
 import org.gicentre.geomap.GeoMap;
-import org.gicentre.geomap.Table;
+import org.gicentre.utils.move.ZoomPan;
 
 import processing.core.PApplet;
 
 //  ****************************************************************************************
 /** Tests shapefile reading into geoMap objects.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 9th January, 2012.
+ *  @version 1.0, 11th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -42,6 +42,7 @@ public class ShapefileTest extends PApplet
     // ----------------------------- Object variables ------------------------------
     
     private GeoMap geoMap;
+    private ZoomPan zoomer;
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -49,22 +50,31 @@ public class ShapefileTest extends PApplet
      */
     public void setup()
     {   
-        size(800,600);
+        size(800,400);
         smooth();
+        zoomer = new ZoomPan(this);
         
         geoMap = new GeoMap(this);
-        geoMap.readFile("greaterLondonWardBoundaries");                
+        geoMap.readFile("world");
+              
+        geoMap.getAttributes().writeAsTable(1000);
+
     }
 
     /** Draws the shapefile data in the sketch.
      */
     public void draw()
     {   
-        background(255);
-        fill(180,120,120,100);
-        strokeWeight(0.3f);
+        background(180,210,240);
+        zoomer.transform();
+        fill(150,190,150);
+        strokeWeight(0.1f);
+        stroke(0,100);
         geoMap.draw();
         
-        noLoop();
+        // Highlight Indonesia to test for multi-part polygons.
+        fill(180,120,120);
+        geoMap.draw(98);
+        
     }    
 }
