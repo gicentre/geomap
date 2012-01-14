@@ -1,12 +1,6 @@
-=GeoMap=
+=Use=
 
-GeoMap makes drawing geographic maps in Processing easy.
-
-==Install==
-
-To install GeoMap, download the most recent version from the [http://code.google.com/p/gicentre-geomap/downloads/list Downloads] page and follow the [http://wiki.processing.org/w/How_to_Install_a_Contributed_Library Manual Install] instructions on the Processing wiki.
-
-==Use==
+==GeoMap==
 
 ===Constructor methods===
 
