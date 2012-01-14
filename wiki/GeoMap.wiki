@@ -16,18 +16,18 @@ GeoMap has two constructor methods.
 
 The first constructor method creates a map with the given bounds. It has five parameters:
 
- # {{{xOrigin}}} is the position of the map from the left of the sketch.
- # {{{yOrigin}}} is the position of the map from the top of the sketch.
- # {{{mapWidth}}} is the width of the map.
- # {{{mapHeight}}} is the height of the map.
- # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
+ # {{{xOrigin}}} is the position of the map from the left of the sketch. It can be a {{{float}}} or an {{{int}}}.
+ # {{{yOrigin}}} is the position of the map from the top of the sketch. It can be a {{{float}}} or an {{{int}}}.
+ # {{{mapWidth}}} is the width of the map. It can be a {{{float}}} or an {{{int}}}.
+ # {{{mapHeight}}} is the height of the map. It can be a {{{float}}} or an {{{int}}}.
+ # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
 ----
 <code language="processing">GeoMap(PApplet parent)</code>
 
 The second constructor method creates a map with the default bounds. It has one parameter:
 
- # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
+ # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
 ===Draw methods===
 
