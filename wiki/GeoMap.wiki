@@ -29,6 +29,22 @@ The second constructor method creates a map with the default bounds. It has one 
 
  # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
+===File methods===
+
+GeoMap has one method to read geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
+
+ * _fileName.shp_ contains the geometry.
+ * _fileName.dbf_ contains the attributes.
+ * _fileName.dbx_ contains the index.
+
+Each file should be placed in the data directory of the current Processing sketch. The easiest way to do this is to drag and drop each file into the Processing development environment.
+
+<code language="processing">geoMap.readFile(fileName)</code>
+
+Reads geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. It has one parameter:
+
+ # {{{fileName}}} is the name of the file without the extension. It should be a {{{String}}}.
+
 ===Draw methods===
 
 GeoMap has three draw methods.
