@@ -20,6 +20,8 @@ void setup()
 
 void draw()
 {
+  background(180, 210, 240);
+  fill(150, 190, 150);
   geoMap.draw();
 }
 }}}
@@ -42,7 +44,7 @@ We read the shapefile containing the geometry and attributes representing the wo
 
 <code language="processing">geoMap.readFile("world");</code>
 
-In {{{draw()}}} we draw our map:
+In {{{draw()}}} we first set the background colour (blue) and the fill colour (green) of our sketch. We then draw our map:
 
 <code language="processing">geoMap.draw();</code>
 
