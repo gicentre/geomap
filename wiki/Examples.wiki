@@ -1,0 +1,49 @@
+=Examples=
+
+Here are some examples of GeoMap in action. To use them, simply copy and paste the code into your Processing development environment. (Remember to install [GeoMap#Install install GeoMap] first!)
+
+==Draw a simple world map==
+
+This sketch draws a world map. It also introduces three important GeoMap methods.
+
+{{{
+import org.gicentre.geomap.*;
+
+GeoMap geoMap;
+
+void setup()
+{
+  size(800, 400);
+  geoMap = new GeoMap(this);
+  geoMap.readFile("world");
+}
+
+void draw()
+{
+  geoMap.draw();
+}
+}}}
+
+===Explanation===
+
+We import the GeoMap classes:
+
+<code language="processing">import org.gicentre.geomap.*;</code>
+
+We declare a variable called {{{geoMap}}} to store our map:
+
+<code language="processing">GeoMap geoMap;</code>
+
+In {{{setup()}}} we first set the size of our sketch. (Remember that {{{size()}}} must be the first line in {{{setup()}}}.) We then initialise our map. Notice how we pass the current sketch to our map using {{{this}}}:
+
+<code language="processing">geoMap = new GeoMap(this);</code>
+
+We read the shapefile containing the geometry and attributes representing the world. Notice how the file name does not include the extension:
+
+<code language="processing">geoMap.readFile("world");</code>
+
+In {{{draw()}}} we draw our map:
+
+<code language="processing">geoMap.draw();</code>
+
+Finally, we click the run button and admire our world map.
