@@ -32,3 +32,22 @@ The second constructor method creates a map with the default bounds. It has one 
 ===Draw methods===
 
 GeoMap has three draw methods.
+
+<code language="processing">geoMap.draw()</code>
+
+The first draw method draws the map in the parent sketch.
+
+----
+<code language="processing">geoMap.draw(id)</code>
+
+The second draw method draws the feature that matches the given id. It has one parameter:
+
+ # {{{id}}} is the id that identifies the feature to draw. It should be an {{{int}}}.
+
+----
+<code language="processing">geoMap.draw(attribute, column)</code>
+
+The third draw method draws the features that match the given attribute in the given column in the map's attribute table. It has two parameters:
+
+ # {{{attribute}}} is the attribute that identifies the features to draw. It should be a {{{String}}}.
+ # {{{column}}} is the column in the attribute table. It should be an {{{int}}}. Note that the first column in the attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
