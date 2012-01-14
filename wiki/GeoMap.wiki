@@ -8,9 +8,10 @@ To install GeoMap, download the most recent version from the Downloads page and 
 
 ==Use==
 
+===Constructor methods===
+
 GeoMap has two constructor methods.
 
-----
 <code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
 
 The first constructor method creates a map with the given bounds. It has five parameters:
@@ -22,10 +23,12 @@ The first constructor method creates a map with the given bounds. It has five pa
  # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
 ----
-<code language="java">GeoMap(PApplet parent)</code>
+<code language="processing">GeoMap(PApplet parent)</code>
 
 The second constructor method creates a map with the default bounds. It has one parameter:
 
  # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
-----
+===Draw methods===
+
+GeoMap has three draw methods.
