@@ -1,0 +1,31 @@
+=GeoMap=
+
+GeoMap makes drawing geographic maps in Processing easy.
+
+==Install==
+
+To install GeoMap, download the most recent version from the Downloads page and follow the [http://wiki.processing.org/w/How_to_Install_a_Contributed_Library Manual Install] instructions on the Processing wiki.
+
+==Use==
+
+GeoMap has two constructor methods.
+
+----
+<code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
+
+The first constructor method creates a map with the given bounds. It has five parameters:
+
+ # {{{xOrigin}}} is the position of the map from the left of the sketch.
+ # {{{yOrigin}}} is the position of the map from the top of the sketch.
+ # {{{mapWidth}}} is the width of the map.
+ # {{{mapHeight}}} is the height of the map.
+ # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
+
+----
+<code language="java">GeoMap(PApplet parent)</code>
+
+The second constructor method creates a map with the default bounds. It has one parameter:
+
+ # {{{parent}}} is the parent sketch. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
+
+----
