@@ -5,6 +5,8 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 
+import org.gicentre.handy.HandyRenderer;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -38,6 +40,7 @@ public class Polygon implements Feature
     private PApplet parent;			// Parent sketch.
     private int numVertices;		// Number of vertices that make up the polygon (including parts).
     private ArrayList<Integer>subPartPointers;
+    private Drawable renderer;		// Alternative renderer for sketchy graphics and other styles.
 
     // ----------------------------------- Constructors -----------------------------------
     
@@ -57,6 +60,7 @@ public class Polygon implements Feature
     public Polygon(float[] x, float[] y, PApplet parent)
     {
         this.parent = parent;
+        renderer = null;
         path = new Path2D.Float();
         numVertices = 0;
         subPartPointers = new ArrayList<Integer>();
@@ -93,12 +97,31 @@ public class Polygon implements Feature
             numVertices += x.length;
         }	
     }
+    
+    /** Sets the renderer to be used for drawing this feature. This need only be set if some non-default
+     *  rendering is required (such as the sketchy rendering produced by the Handy library).
+     *  @param renderer New renderer to use or null if default rendering is to be used.
+     */
+    public void setRenderer(Drawable renderer)
+    {
+    	this.renderer = renderer;
+    }
 
     /** Draws the polygon in the parent sketch.
      *  @param transformer Class that handles the geographic to screen transformations.
      */
-    public void draw(Geographic transformer)
+    @SuppressWarnings("null")
+	public void draw(Geographic transformer)
     {
+    	if (renderer == null)
+    	{
+    		drawDefault(transformer);
+    		return;
+    	}
+    	
+    	// This will draw the feature using the stored renderer (e.g. sketchy graphics).
+    	ArrayList<Float>x=null,y=null;
+    	
     	boolean containsGeom = false;
         PathIterator i = path.getPathIterator(new AffineTransform());
         float[] coords = new float[6];
@@ -111,9 +134,10 @@ public class Polygon implements Feature
             {
             	if (containsGeom)
             	{
-            		parent.endShape(PConstants.CLOSE);
+            		renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
             	}
-            	parent.beginShape();
+            	x = new ArrayList<Float>();
+            	y = new ArrayList<Float>();
             	containsGeom = true;           	
             }
             
@@ -121,7 +145,7 @@ public class Polygon implements Feature
             {
             	if (containsGeom)
             	{
-            		parent.endShape(PConstants.CLOSE);
+            		renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
             		containsGeom = false;
             	}
             }
@@ -129,16 +153,17 @@ public class Polygon implements Feature
             if (containsGeom)
             {
             	PVector p = transformer.geoToScreen(coords[0], coords[1]);
-            	parent.vertex(p.x,p.y);
+            	x.add(new Float(p.x));
+            	y.add(new Float(p.y));
             }
             
             i.next();
         }
         if (containsGeom)
         {
-        	parent.endShape(PConstants.CLOSE);
+        	renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
         }
-    }
+    }  
     
     /** Reports the number of vertices that make up the polygon feature.
      *  @return number of vertices that make up the polygon.
@@ -279,6 +304,52 @@ public class Polygon implements Feature
         {
             // Existing path.
             path.lineTo(x, y);
+        }
+    }
+    
+    /** Draws the polygon in the parent sketch using the default rendering style from the parent sketch.
+     *  @param transformer Class that handles the geographic to screen transformations.
+     */
+    private void drawDefault(Geographic transformer)
+    {
+    	boolean containsGeom = false;
+        PathIterator i = path.getPathIterator(new AffineTransform());
+        float[] coords = new float[6];
+
+        while (!i.isDone())
+        {
+            int segType = i.currentSegment(coords);
+                        
+            if (segType == PathIterator.SEG_MOVETO)
+            {
+            	if (containsGeom)
+            	{
+            		parent.endShape(PConstants.CLOSE);
+            	}
+            	parent.beginShape();
+            	containsGeom = true;           	
+            }
+            
+            if (segType == PathIterator.SEG_CLOSE)
+            {
+            	if (containsGeom)
+            	{
+            		parent.endShape(PConstants.CLOSE);
+            		containsGeom = false;
+            	}
+            }
+            
+            if (containsGeom)
+            {
+            	PVector p = transformer.geoToScreen(coords[0], coords[1]);
+            	parent.vertex(p.x,p.y);
+            }
+            
+            i.next();
+        }
+        if (containsGeom)
+        {
+        	parent.endShape(PConstants.CLOSE);
         }
     }
 }
