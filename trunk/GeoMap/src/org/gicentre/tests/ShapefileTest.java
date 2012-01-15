@@ -1,6 +1,11 @@
 package org.gicentre.tests;
 
+import org.gicentre.geomap.DrawableFactory;
+import org.gicentre.geomap.Feature;
+import org.gicentre.geomap.FeatureType;
 import org.gicentre.geomap.GeoMap;
+import org.gicentre.geomap.Polygon;
+import org.gicentre.handy.HandyRenderer;
 import org.gicentre.utils.move.ZoomPan;
 
 import processing.core.PApplet;
@@ -58,8 +63,23 @@ public class ShapefileTest extends PApplet
 		textFont(createFont("Sans-serif", 20));
 
 		geoMap = new GeoMap(this);
-		geoMap.readFile("world");
-
+		//geoMap.readFile("world");
+		geoMap.readFile("usContinental");
+		
+		/* TEMPORARY: To test sketchy rendering.
+		textFont(createFont("YWFTColtrane", 20));
+		HandyRenderer handy = new HandyRenderer(this);
+		handy.setFillGap(2);
+		handy.setFillWeight(0.5f);
+		for (Feature feature : geoMap.getFeatures().values())
+		{
+			if (feature.getType() != FeatureType.POINT)
+			{
+				feature.setRenderer(DrawableFactory.createHandyRenderer(handy));
+			}
+		}
+		---- End of TEMPORARY section */
+		
 		geoMap.getAttributes().writeAsTable(5);
 
 	}
@@ -104,5 +124,24 @@ public class ShapefileTest extends PApplet
 			fill(0,200);
 			text(name,15,20);
 		}
+	
+		// Don't redraw unless instructed to do so.
+		noLoop();
+	}
+	
+	/** Updates the display whenever the mouse is moved.
+	 */
+	@Override
+	public void mouseMoved()
+	{
+		loop();
+	}
+	
+	/** Updates the display whenever the mouse is dragged
+	 */
+	@Override
+	public void mouseDragged()
+	{
+		loop();
 	}
 }

@@ -8,7 +8,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Class for representing and drawing a line feature.
  *  @author Jo Wood , giCentre, City University London.
- *  @version 1.0, 10th January, 2012
+ *  @version 1.0, 15th January, 2012
  */
 // *****************************************************************************************
 
@@ -33,6 +33,7 @@ public class Line implements Feature
 	private float[] x,y;			// Coordinates of the line.
     private PApplet parent;			// Parent sketch.
     private static float tolDistSq;	// Squared tolerance distance used for line-point matching.
+    private Drawable renderer;		// Alternative renderer for sketchy graphics and other styles.
 
     // ------------------------------------ Constructor -----------------------------------
     
@@ -51,6 +52,30 @@ public class Line implements Feature
     
     // ------------------------------------- Methods -------------------------------------
     
+    /** Draws the line in the parent sketch.
+     *  @param transformer Class that handles the geographic to screen transformations.
+     */
+    public void draw(Geographic transformer)
+    {
+    	if (renderer == null)
+    	{
+    		drawDefault(transformer);
+    		return;
+    	}
+    	
+    	// This version will use the renderer stored in this feature to do the drawing.
+    	float[] xPrime = new float[x.length];
+    	float[] yPrime = new float[y.length];
+    	
+    	for (int i=0; i<x.length; i++)
+    	{
+    		PVector p = transformer.geoToScreen(x[i], y[i]);
+    		xPrime[i] = p.x;
+    		yPrime[i] = p.y;
+    	}
+    	renderer.polyLine(xPrime, yPrime);
+    }
+        
     /** Reports the number of vertices that make up the line feature.
      *  @return number of vertices that make up the line.
      */
@@ -86,20 +111,15 @@ public class Line implements Feature
 	{
 		return y;
 	}
-
-    /** Draws the line in the parent sketch.
-     *  @param transformer Class that handles the geographic to screen transformations.
+    
+    /** Sets the renderer to be used for drawing this feature. This need only be set if some non-default
+     *  rendering is required (such as the sketchy rendering produced by the Handy library).
+     *  @param renderer New renderer to use or null if default rendering is to be used.
      */
-    public void draw(Geographic transformer)
+    public void setRenderer(Drawable renderer)
     {
-    	PVector p1 = transformer.geoToScreen(x[0], y[0]);
-    	for (int i=0; i<x.length-1; i++)
-    	{
-    		PVector p2 = transformer.geoToScreen(x[i+1], y[i+1]);
-    		parent.line(p1.x,p1.y,p2.x,p2.y);
-    		p1 = p2;
-    	}
-    }   
+    	this.renderer = renderer;
+    }
     
     /** Sets the tolerance values used for contains() testing. Any location within a distance of 
      *  the given tolerance of this line is considered to be contained within it. Note that
@@ -129,4 +149,21 @@ public class Line implements Feature
     	}
     	return false;
     }
+    
+    // ---------------------------------- Private Methods --------------------------------
+    
+    /** Draws the line in the parent sketch using the default rendering from the parent sketch.
+     *  @param transformer Class that handles the geographic to screen transformations.
+     */
+    private void drawDefault(Geographic transformer)
+    {
+    	PVector p1 = transformer.geoToScreen(x[0], y[0]);
+    	for (int i=0; i<x.length-1; i++)
+    	{
+    		PVector p2 = transformer.geoToScreen(x[i+1], y[i+1]);
+    		parent.line(p1.x,p1.y,p2.x,p2.y);
+    		p1 = p2;
+    	}
+    }
+
 }

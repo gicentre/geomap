@@ -30,6 +30,7 @@ public class Point implements Feature
 	
 	private PVector p;				// Coordinates of the point.
     private PApplet parent;			// Parent sketch.
+    private Drawable renderer;		// Renderer used for drawing feature in a non-defult style.
   
     private static float tolDistSq;	// Squared tolerance distance used for point matching.
     
@@ -92,8 +93,25 @@ public class Point implements Feature
     public void draw(Geographic transformer)
     {
     	PVector screenCoord = transformer.geoToScreen(p.x, p.y);
-    	parent.point(screenCoord.x, screenCoord.y);
+    	if (renderer == null)
+    	{
+    		parent.point(screenCoord.x, screenCoord.y);
+    	}
+    	else
+    	{
+    		renderer.point(screenCoord.x,screenCoord.y);
+    	}
     }   
+    
+    /** Sets the renderer to be used for drawing this feature. This need only be set if some
+     *  non-default rendering is required (such as the sketchy rendering produced by the Handy 
+     *  library).
+     *  @param renderer New renderer to use or null if default rendering is to be used.
+     */
+    public void setRenderer(Drawable renderer)
+    {
+    	this.renderer = renderer;
+    }
     
     /** Sets the tolerance values used for contains() testing. Any location within a distance of 
      *  the given tolerance of this point is considered to be at the same location. Note that

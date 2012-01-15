@@ -3,7 +3,7 @@ package org.gicentre.geomap;
 // *****************************************************************************************
 /** Identifies the behaviour of all features.
  *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.0, 8th January, 2012
+ *  @version 1.0, 15th January, 2012
  */
 // *****************************************************************************************
 
@@ -45,4 +45,11 @@ public interface Feature
      *  @return True if the given point is contained within the feature, false if not.
      */
     public abstract boolean contains(float x, float y);
+    
+    /** Should set the renderer to be used for drawing this feature. This need only be set if 
+     *  some non-default rendering is required (such as the sketchy rendering produced by the
+     *  Handy library).
+     *  @param renderer New renderer to use or null if default rendering is to be used.
+     */
+    public abstract void setRenderer(Drawable renderer);
 }
