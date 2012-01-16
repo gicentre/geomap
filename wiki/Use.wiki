@@ -1,10 +1,10 @@
 =Use=
 
-==GeoMap==
+==!GeoMap==
 
 ===Constructor methods===
 
-GeoMap has two constructor methods.
+!GeoMap has two constructor methods.
 
 <code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
 
@@ -25,7 +25,7 @@ The second constructor method creates a map with the default bounds. It has one 
 
 ===Read methods===
 
-GeoMap has one method to read geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
+!GeoMap has one method to read geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
 
  * _fileName.shp_ contains the geometry.
  * _fileName.dbf_ contains the attributes.
@@ -41,7 +41,7 @@ Reads geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ES
 
 ===Draw methods===
 
-GeoMap has three draw methods.
+!GeoMap has three draw methods.
 
 <code language="processing">geoMap.draw()</code>
 
@@ -64,7 +64,7 @@ The third draw method draws the features that match the given value in the given
 
 ===Attribute methods===
 
-GeoMap has one method to get an attribute table: Features are rows, attributes are columns and values are the contents of cells.
+!GeoMap has one method to get an attribute table: Features are rows, attributes are columns and values are the contents of cells.
 
 <code language="processing">geoMap.getAttributes()</code>
 
