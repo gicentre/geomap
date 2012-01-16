@@ -64,7 +64,7 @@ The third draw method draws the features that match the given value in the given
 
 ===Attribute table methods===
 
-Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes.
+Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes. Each {{{GeoMap}}} has one attribute table method.
 
 <code language="processing">geoMap.getAttributes()</code>
 
