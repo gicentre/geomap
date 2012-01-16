@@ -4,7 +4,7 @@
 
 ===Constructor methods===
 
-!GeoMap has two constructor methods.
+Each {{{GeoMap}}} has two constructor methods.
 
 <code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
 
@@ -25,7 +25,7 @@ The second constructor method creates a map with the default bounds. It has one 
 
 ===Read methods===
 
-!GeoMap has one method to read geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
+Each {{{GeoMap}}} has one method to read data from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
 
  * _fileName.shp_ contains the geometry.
  * _fileName.dbf_ contains the attributes.
@@ -35,13 +35,13 @@ Each file should be placed in the data directory of the current Processing sketc
 
 <code language="processing">geoMap.readFile(fileName)</code>
 
-Reads geometry and attributes from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. It has one parameter:
+Reads data from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. It has one parameter:
 
  # {{{fileName}}} is the name of the file without the extension. It should be a {{{String}}}.
 
 ===Draw methods===
 
-!GeoMap has three draw methods.
+Each {{{GeoMap}}} has three draw methods.
 
 <code language="processing">geoMap.draw()</code>
 
@@ -62,9 +62,9 @@ The third draw method draws the features that match the given value in the given
  # {{{value}}} is the value that matches the features to draw. It should be a {{{String}}}.
  # {{{column}}} is the column in the map's attribute table. It should be an {{{int}}}. Note that the first column in the map's attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
 
-===Attribute methods===
+===Attribute table methods===
 
-!GeoMap has one method to get an attribute table.
+Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes.
 
 <code language="processing">geoMap.getAttributes()</code>
 
@@ -76,7 +76,7 @@ Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes
 
 ===Write methods===
 
-Each {{{Table}}} has one method to write an attribute table.
+Each {{{Table}}} has one write method.
 
 <code language="processing">table.writeAsTable(maxNumRows)</code>
 
