@@ -76,7 +76,7 @@ The first attribute table method gets the map's attribute table. It will be a {{
 
 <code language="processing">geoMap.getID(sketchX, sketchY)</code>
 
-The second attribute method gets the id of the feature at the given location in the sketch. It will be an {{{int}}}. It has two parameters:
+The second attribute method gets the id of the feature at the given location in the sketch or {{{-1}}} in the event that there is no feature. It will be an {{{int}}}. It has two parameters:
 
  # {{{sketchX}}} is the position from the left of the sketch. It should be a {{{float}}} or an {{{int}}}.
  # {{{sketchY}}} is the position from the top of the sketch. It should be a {{{float}}} or an {{{int}}}.
