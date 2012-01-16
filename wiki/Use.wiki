@@ -6,6 +6,7 @@
 
 Each {{{GeoMap}}} has two constructor methods.
 
+<a name="constructor_bounds_parent">
 <code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
 
 The first constructor method creates a map with the given bounds. It has five parameters:
@@ -17,6 +18,7 @@ The first constructor method creates a map with the given bounds. It has five pa
  # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
 ----
+<a name="constructor_parent">
 <code language="processing">GeoMap(PApplet parent)</code>
 
 The second constructor method creates a map with the default bounds. It has one parameter:
