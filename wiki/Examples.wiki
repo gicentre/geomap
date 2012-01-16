@@ -1,10 +1,10 @@
 =Examples=
 
-Here are some examples of GeoMap in action. To use them, simply copy and paste the code into your Processing development environment. (Remember to install [GeoMap#Install install GeoMap] first!)
+Here are some examples of !GeoMap in action. To use them, simply copy and paste the code into your Processing development environment.
 
 ==Draw a simple world map==
 
-This sketch draws a world map. It also introduces three important GeoMap methods.
+This sketch draws a world map. It also introduces three important !GeoMap methods.
 
 {{{
 import org.gicentre.geomap.*;
@@ -28,7 +28,7 @@ void draw()
 
 ===Explanation===
 
-We import the GeoMap classes:
+We import the !GeoMap classes:
 
 <code language="processing">import org.gicentre.geomap.*;</code>
 
