@@ -50,3 +50,72 @@ In {{{draw()}}} we first set the background colour (blue) and the fill colour (g
 <code language="processing">geoMap.draw();</code>
 
 Finally, we click the run button and admire our world map.
+
+==Draw a simple interactive world map==
+
+This sketch adds interaction to the [#Draw_a_simple_world_map simple world map].
+
+{{{
+import org.gicentre.geomap.*;
+
+GeoMap geoMap;
+Table table;
+
+void setup()
+{
+  size(800, 400);
+  smooth();
+  geoMap = new GeoMap(this);
+  geoMap.readFile("world");
+  table = geoMap.getAttributes();
+  table.writeAsTable(5);
+}
+
+void draw()
+{
+  background(180, 210, 240);
+  fill(150, 190, 150);
+  geoMap.draw();
+
+  int id = geoMap.getID(mouseX, mouseY);
+  if (id != -1)
+  {
+    fill(180, 120, 120);
+    geoMap.draw(id);
+  }
+}
+}}}
+
+===Explanation===
+
+We declare a variable called {{{table}}} to store our map's attribute table:
+
+<code language="processing">Table table;</code>
+
+We get the map's attribute table in {{{setup()}}}. Notice how we do so after we've initialised our map and read the shapefile representing the world:
+
+{{{
+geoMap = new GeoMap(this);
+geoMap.readFile("world");
+table = geoMap.getAttributes();
+}}}
+
+Although not essential, we write the first five lines of the map's attribute table to the console in the Processing development environment:
+
+<code language="processing">table.writeAsTable(5);</code>
+
+In {{{draw()}}} we get the id of the country under the mouse and store it in a variable called {{{id}}}. If the mouse isn't over a country, {{{id}}} will be {{{-1}}}.
+
+<code language="processing">int id = geoMap.getID(mouseX, mouseY);</code>
+
+We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we set the fill colour (red) and draw the country that matches {{{id}}} in the map's attribute table.
+
+{{{
+if (id != -1)
+{
+  fill(180, 120, 120);
+  geoMap.draw(id);
+}
+}}}
+
+Finally, we click the run button and admire our interactive world map.
