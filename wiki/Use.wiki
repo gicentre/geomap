@@ -8,6 +8,7 @@ Each {{{GeoMap}}} has two constructor methods.
 
 <a name="constructor_bounds_parent">
 <code language="processing">GeoMap(xOrigin, yOrigin, mapWidth, mapHeight, parent)</code>
+</a>
 
 The first constructor method creates a map with the given bounds. It has five parameters:
 
@@ -20,6 +21,7 @@ The first constructor method creates a map with the given bounds. It has five pa
 ----
 <a name="constructor_parent">
 <code language="processing">GeoMap(PApplet parent)</code>
+</a>
 
 The second constructor method creates a map with the default bounds. It has one parameter:
 
