@@ -14,6 +14,7 @@ GeoMap geoMap;
 void setup()
 {
   size(800, 400);
+  smooth();
   geoMap = new GeoMap(this);
   geoMap.readFile("world");
 }
@@ -36,7 +37,7 @@ We declare a variable called {{{geoMap}}} to store our map:
 
 <code language="processing">GeoMap geoMap;</code>
 
-In {{{setup()}}} we first set the size of our sketch. (Remember that {{{size()}}} must be the first line in {{{setup()}}}.) We then initialise our map. Notice how we pass the current sketch to our map using {{{this}}}:
+In {{{setup()}}} we first set the size of our sketch and turn on smoothing. (Remember that {{{size()}}} must be the first line in {{{setup()}}}.) We then initialise our map. Notice how we pass the current sketch to our map using {{{this}}}:
 
 <code language="processing">geoMap = new GeoMap(this);</code>
 
