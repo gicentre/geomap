@@ -64,8 +64,22 @@ The third draw method draws the features that match the given value in the given
 
 ===Attribute methods===
 
-!GeoMap has one method to get an attribute table: Features are rows, attributes are columns and values are the contents of cells.
+!GeoMap has one method to get an attribute table.
 
 <code language="processing">geoMap.getAttributes()</code>
 
-Gets the attribute table that contains the map's attributes. It will be a {{{Table}}}.
+Gets the map's attribute table. It will be a {{{Table}}}.
+
+==Table==
+
+Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes.
+
+===Write methods===
+
+Each {{{Table}}} has one method to write an attribute table.
+
+<code language="processing">table.writeAsTable(maxNumRows)</code>
+
+Writes the map's attribute table to the console in the Processing development environment. It has one parameter:
+
+ # {{{maxNumRows}}} is the maximum number of rows to write to the console in the Processing development environment. It should be an {{{int}}}.
