@@ -66,13 +66,20 @@ The third draw method draws the features that match the given value in the given
  # {{{value}}} is the value that matches the features to draw. It should be a {{{String}}}.
  # {{{column}}} is the column in the map's attribute table. It should be an {{{int}}}. Note that the first column in the map's attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
 
-===Attribute table methods===
+===Attribute methods===
 
-Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes. Each {{{GeoMap}}} has one attribute table method.
+Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes. Each {{{GeoMap}}} has two attribute methods.
 
 <code language="processing">geoMap.getAttributes()</code>
 
-Gets the map's attribute table. It will be a {{{Table}}}.
+The first attribute table method gets the map's attribute table. It will be a {{{Table}}}.
+
+<code language="processing">geoMap.getID(sketchX, sketchY)</code>
+
+The second attribute method gets the id of the feature at the given location in the sketch. It will be an {{{int}}}. It has two parameters:
+
+ # {{{sketchX}}} is the position from the left of the sketch. It should be a {{{float}}} or an {{{int}}}.
+ # {{{sketchY}}} is the position from the top of the sketch. It should be a {{{float}}} or an {{{int}}}.
 
 ==Table==
 
