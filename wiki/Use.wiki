@@ -12,10 +12,10 @@ Each {{{GeoMap}}} has two constructor methods.
 
 The first constructor method creates a map with the given bounds. It has five parameters:
 
- # {{{xOrigin}}} is the position of the map from the left of the sketch. It should be a {{{float}}} or an {{{int}}}.
- # {{{yOrigin}}} is the position of the map from the top of the sketch. It should be a {{{float}}} or an {{{int}}}.
- # {{{mapWidth}}} is the width of the map. It should be a {{{float}}} or an {{{int}}}.
- # {{{mapHeight}}} is the height of the map. It should be a {{{float}}} or an {{{int}}}.
+ # {{{xOrigin}}} is the position of the map from the left of the sketch. It should be a number.
+ # {{{yOrigin}}} is the position of the map from the top of the sketch. It should be a number.
+ # {{{mapWidth}}} is the width of the map. It should be a number.
+ # {{{mapHeight}}} is the height of the map. It should be a number.
  # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
 ----
@@ -78,8 +78,8 @@ The first attribute table method gets the map's attribute table. It will be a {{
 
 The second attribute method gets the id of the feature at the given location in the sketch or {{{-1}}} in the event that there is no feature. It will be an {{{int}}}. It has two parameters:
 
- # {{{sketchX}}} is the position from the left of the sketch. It should be a {{{float}}} or an {{{int}}}.
- # {{{sketchY}}} is the position from the top of the sketch. It should be a {{{float}}} or an {{{int}}}.
+ # {{{sketchX}}} is the position from the left of the sketch. It should be a number.
+ # {{{sketchY}}} is the position from the top of the sketch. It should be a number.
 
 ==Table==
 
