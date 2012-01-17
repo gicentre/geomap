@@ -1,0 +1,13 @@
+=Tips=
+
+==Data==
+
+You can find data for individual countries and their administrative zones from [http://www.naturalearthdata.com/ Natural Earth] and [http://www.gadm.org/ Global Administrative Areas]. You might want to simply this data using [http://mapshaper.com/ MapShaper] or open it in a GIS (Geographic Information System) such as [http://www.landserf.org/ LandSerf].
+
+==Colour==
+
+geoMap is great at making [http://en.wikipedia.org/wiki/Choropleth_map choropleth maps]. Think hard about colour though: [http://colorbrewer.org/ ColorBrewer] provides some attractive (and appropriate) colour schemes to help you along.
+
+==Panning and zooming==
+
+You can add panning and zooming to your map using the [http://www.gicentre.org/utils/ giCentre Utilities]. The utilities also have ColorBrewer colour schemes built in, alongside some easy-to-use chart types such as bar charts, line charts and scatter plots.
