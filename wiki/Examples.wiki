@@ -1,8 +1,8 @@
-=Examples=
-
 Here are some examples of geoMap in action. To use them, simply copy and paste the code into your Processing development environment.
 
-==Draw a simple world map==
+<wiki:toc />
+
+=Draw a simple world map=
 
 This sketch draws a simple world map.
 
@@ -27,7 +27,7 @@ void draw()
 }
 }}}
 
-===Explanation===
+==Explanation==
 
 We import the geoMap classes:
 
@@ -51,7 +51,7 @@ In {{{draw()}}} we first set the background colour (blue) and the fill colour (g
 
 Finally, we click the run button and admire our world map.
 
-==Draw a simple interactive world map==
+=Draw a simple interactive world map=
 
 This sketch adds interaction to the [#Draw_a_simple_world_map simple world map].
 
@@ -86,7 +86,7 @@ void draw()
 }
 }}}
 
-===Explanation===
+==Explanation==
 
 We declare a variable called {{{table}}} to store our map's attribute table:
 
