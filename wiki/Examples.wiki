@@ -119,3 +119,77 @@ if (id != -1)
 }}}
 
 Finally, we click the run button and admire our interactive world map.
+
+=Query a simple interactive world map=
+
+This sketch builds on the [#Draw_a_simple_interactive_world_map simple interactive world map]. As well as highlighting, country names are displayed at the top of the sketch.
+
+{{{
+import org.gicentre.geomap.*;
+
+GeoMap geoMap;
+Table table;
+
+void setup()
+{
+  size(800, 400);
+  smooth();
+  geoMap = new GeoMap(this);
+  geoMap.readFile("world");
+  table = geoMap.getAttributes();
+  table.writeAsTable(5);
+}
+
+void draw()
+{
+  background(180, 210, 240);
+  stroke(0);
+  fill(150, 190, 150);
+  geoMap.draw();
+
+  int id = geoMap.getID(mouseX, mouseY);
+  if (id != -1)
+  {
+    fill(180, 120, 120);
+    geoMap.draw(id);
+  }
+
+  noStroke();
+  fill(255, 192);
+  rect(0, 0, width, 20);
+
+  if (id != -1)
+  {
+    String name = table.getString(Integer.toString(id), 4);
+    fill(0);
+    textAlign(LEFT, CENTER);
+    text(name, 0, 0, width, 20);
+  }
+}
+}}}
+
+==Explanation==
+
+We set the stroke colour before we draw our map. This is because we turn off the stroke later, when we draw a semi-transparent white rectangle at the top of the sketch:
+
+{{{
+stroke(0);
+...
+noStroke();
+fill(255, 192);
+rect(0, 0, width, 20);
+}}}
+
+We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we get the name of the country under the mouse and store it in a variable called {{{name}}}. (We know that country names are in column {{{4}}} of the map's attribute table because we looked at the console in the Processing development environment.) Notice how we use {{{Integer.toString()}}} to convert {{{id}}} from an {{{int}}} to a {{{String}}}:
+
+<code language="processing">String name = table.getString(Integer.toString(id), 4);</code>
+
+We set the fill colour and the text alignment, and draw the country name to the screen:
+
+{{{
+fill(0);
+textAlign(LEFT, CENTER);
+text(name, 0, 0, width, 20);
+}}}
+
+Finally, we click the run button and admire our interactive world map.
