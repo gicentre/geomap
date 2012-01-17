@@ -1,8 +1,8 @@
-=Use=
+<wiki:toc />
 
-==!GeoMap==
+=!GeoMap=
 
-===Constructor methods===
+==Constructor methods==
 
 Each {{{GeoMap}}} has two constructor methods.
 
@@ -27,7 +27,7 @@ The second constructor method creates a map with the default bounds. It has one 
 
  # {{{parent}}} is the parent sketch. It should be a {{{PApplet}}}. In most cases, simply use {{{this}}} to refer to the current Processing sketch.
 
-===Read methods===
+==Read methods==
 
 Each {{{GeoMap}}} has one method to read data from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. Note that a shapefile consists of three files:
 
@@ -43,7 +43,7 @@ Reads data from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile]. It h
 
  # {{{fileName}}} is the name of the file without the extension. It should be a {{{String}}}.
 
-===Draw methods===
+==Draw methods==
 
 Each {{{GeoMap}}} has three draw methods.
 
@@ -66,7 +66,7 @@ The third draw method draws the features that match the given attribute in the g
  # {{{attribute}}} is the attribute that matches the features to draw. It should be a {{{String}}}. Note that even when {{{attribute}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.)
  # {{{column}}} is the column in the map's attribute table. It should be an {{{int}}}. Note that the first column in the map's attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
 
-===Attribute methods===
+==Attribute methods==
 
 Each {{{GeoMap}}} has one or more attributes stored in a {{{Table}}}. The first column in the map's attribute table (column {{{0}}}) stores an id for each feature in the map. Additional columns store attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. Each {{{GeoMap}}} has two attribute methods.
 
@@ -81,11 +81,11 @@ The second attribute method gets the id of the feature at the given location in 
  # {{{sketchX}}} is the position from the left of the sketch. It should be a number.
  # {{{sketchY}}} is the position from the top of the sketch. It should be a number.
 
-==Table==
+=Table=
 
 Each {{{GeoMap}}} has one or more attributes stored in a {{{Table}}}. The first column in the map's attribute table (column {{{0}}}) stores an id for each feature in the map. Additional columns store attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method.
 
-===Write methods===
+==Write methods==
 
 Each {{{Table}}} has one write method.
 
@@ -95,7 +95,7 @@ Writes the map's attribute table to the console in the Processing development en
 
  # {{{maxNumRows}}} is the maximum number of rows to write to the console in the Processing development environment. It should be an {{{int}}}.
 
-===Query methods===
+==Query methods==
 
 Each {{{Table}}} has three query methods.
 
