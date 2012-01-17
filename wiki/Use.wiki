@@ -54,7 +54,7 @@ The first draw method draws the map in the parent sketch.
 ----
 <code language="processing">geoMap.draw(id)</code>
 
-The second draw method draws the feature that matches the given id in the map's attribute table. It has one parameter:
+The second draw method draws the feature that matches the given id. It has one parameter:
 
  # {{{id}}} is the id that matches the feature to draw. It should be an {{{int}}}.
 
@@ -68,11 +68,11 @@ The third draw method draws the features that match the given attribute in the g
 
 ===Attribute methods===
 
-Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes. Each {{{GeoMap}}} has two attribute methods.
+Each {{{GeoMap}}} has one or more attributes stored in a {{{Table}}}. The first column in the map's attribute table (column {{{0}}}) stores an id for each feature in the map. Additional columns store attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. Each {{{GeoMap}}} has two attribute methods.
 
 <code language="processing">geoMap.getAttributes()</code>
 
-The first attribute table method gets the map's attribute table. It will be a {{{Table}}}.
+The first attribute method gets the map's attributes. These will be in a {{{Table}}}.
 
 <code language="processing">geoMap.getID(sketchX, sketchY)</code>
 
@@ -83,7 +83,7 @@ The second attribute method gets the id of the feature at the given location in 
 
 ==Table==
 
-Each {{{GeoMap}}} has an attribute table. By default, this stores the attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. In an attribute table, rows are features and columns are attributes.
+Each {{{GeoMap}}} has one or more attributes stored in a {{{Table}}}. The first column in the map's attribute table (column {{{0}}}) stores an id for each feature in the map. Additional columns store attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method.
 
 ===Write methods===
 
