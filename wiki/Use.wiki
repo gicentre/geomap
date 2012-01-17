@@ -63,7 +63,7 @@ The second draw method draws the feature that matches the given id. It has one p
 
 The third draw method draws the features that match the given attribute in the given column in the map's attribute table. It has two parameters:
 
- # {{{attribute}}} is the attribute that matches the features to draw. It should be a {{{String}}}.
+ # {{{attribute}}} is the attribute that matches the features to draw. It should be a {{{String}}}. Note that even when {{{attribute}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.)
  # {{{column}}} is the column in the map's attribute table. It should be an {{{int}}}. Note that the first column in the map's attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
 
 ===Attribute methods===
