@@ -1,8 +1,10 @@
+=Examples=
+
 Here are some examples of geoMap in action. To use them, simply copy and paste the code into your Processing development environment.
 
 <wiki:toc />
 
-=Draw a simple world map=
+==Draw a simple world map==
 
 This sketch draws a simple world map.
 
@@ -27,7 +29,7 @@ void draw()
 }
 }}}
 
-==Explanation==
+===Explanation===
 
 We import the geoMap classes:
 
@@ -51,7 +53,7 @@ In {{{draw()}}} we first set the background colour (blue) and the fill colour (g
 
 Finally, we click the run button and admire our world map.
 
-=Draw a simple interactive world map=
+==Draw a simple interactive world map==
 
 This sketch adds interaction to the [#Draw_a_simple_world_map simple world map].
 
@@ -86,7 +88,7 @@ void draw()
 }
 }}}
 
-==Explanation==
+===Explanation===
 
 We declare a variable called {{{table}}} to store our map's attribute table:
 
@@ -120,7 +122,7 @@ if (id != -1)
 
 Finally, we click the run button and admire our interactive world map.
 
-=Query a simple interactive world map=
+==Query a simple interactive world map==
 
 This sketch builds on the [#Draw_a_simple_interactive_world_map simple interactive world map]. As well as highlighting, country names are displayed at the top of the sketch.
 
@@ -168,7 +170,7 @@ void draw()
 }
 }}}
 
-==Explanation==
+===Explanation===
 
 We set the stroke colour before we draw our map. This is because we turn off the stroke later, when we draw a semi-transparent white rectangle at the top of the sketch:
 
