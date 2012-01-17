@@ -94,3 +94,32 @@ Each {{{Table}}} has one write method.
 Writes the map's attribute table to the console in the Processing development environment. It has one parameter:
 
  # {{{maxNumRows}}} is the maximum number of rows to write to the console in the Processing development environment. It should be an {{{int}}}.
+
+===Query methods===
+
+Each {{{Table}}} has three query methods.
+
+<code language=processing">table.getString(id, column)</code>
+
+Looks for the feature in the {{{Table}}} with the given id, then gets the corresponding attribute in the given column as a {{{String}}}. It has two parameters:
+
+ # {{{id}}} is the id that matches the feature. It should be a {{{String}}}. Note that even when {{{id}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.) Use {{{Integer.toString(id)}}} to covert {{{id}}} from an {{{int}}} to a {{{String}}}.
+ # {{{column}}} is the number of the column. It should be an {{{int}}}.
+
+----
+
+<code language=processing">table.getInt(id, column)</code>
+
+Looks for the feature in the {{{Table}}} with the given id, then gets the corresponding attribute in the given column as an {{{int}}}. It has two parameters:
+
+ # {{{id}}} is the id that matches the feature. It should be a {{{String}}}. Note that even when {{{id}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.) Use {{{Integer.toString(id)}}} to covert {{{id}}} from an {{{int}}} to a {{{String}}}.
+ # {{{column}}} is the number of the column. It should be an {{{int}}}.
+
+----
+
+<code language=processing">table.getFloat(id, column)</code>
+
+Looks for the feature in the {{{Table}}} with the given id, then gets the corresponding attribute in the given column as a {{{float}}}. It has two parameters:
+
+ # {{{id}}} is the id that matches the feature. It should be a {{{String}}}. Note that even when {{{id}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.) Use {{{Integer.toString(id)}}} to covert {{{id}}} from an {{{int}}} to a {{{String}}}.
+ # {{{column}}} is the number of the column. It should be an {{{int}}}.
