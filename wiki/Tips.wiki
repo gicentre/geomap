@@ -2,7 +2,7 @@
 
 ==Data==
 
-You can find data for individual countries and their administrative zones from [http://www.naturalearthdata.com/ Natural Earth] and [http://www.gadm.org/ Global Administrative Areas]. You might want to simply this data using [http://mapshaper.com/ MapShaper] or open it in a GIS (Geographic Information System) such as [http://www.landserf.org/ LandSerf].
+You can find data for individual countries and their administrative zones from [http://www.naturalearthdata.com/ Natural Earth] and [http://www.gadm.org/ Global Administrative Areas]. You might want to simplify this data using [http://mapshaper.org/ MapShaper] or open it in a GIS (Geographic Information System) such as [http://www.landserf.org/ LandSerf].
 
 ==Colour==
 
