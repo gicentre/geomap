@@ -111,7 +111,6 @@ This sketch builds on the [#Draw_a_simple_interactive_world_map simple interacti
 import org.gicentre.geomap.*;
 
 GeoMap geoMap;
-Table table;
 
 void setup()
 {
@@ -119,8 +118,7 @@ void setup()
   smooth();
   geoMap = new GeoMap(this);
   geoMap.readFile("world");
-  table = geoMap.getAttributes();
-  table.writeAsTable(5);
+  geoMap.getAttributes().writeAsTable(5);
 }
 
 void draw()
@@ -143,7 +141,7 @@ void draw()
 
   if (id != -1)
   {
-    String name = table.getString(Integer.toString(id), 4);
+    String name = geoMap.getAttributes().getString(Integer.toString(id), 4);
     fill(0);
     textAlign(LEFT, CENTER);
     text(name, 0, 0, width, 20);
@@ -153,21 +151,9 @@ void draw()
 
 ===Explanation===
 
-We declare a variable called {{{table}}} to store our map's attributes:
+We write the first five lines of our map's attribute table to the console in the Processing development environment. We will need this information later:
 
-<code language="processing">Table table;</code>
-
-We get the map's attributes in {{{setup()}}}. Notice how we do so after we've initialised our map and read the shapefile representing the world:
-
-{{{
-geoMap = new GeoMap(this);
-geoMap.readFile("world");
-table = geoMap.getAttributes();
-}}}
-
-We write the first five lines of the map's attribute table to the console in the Processing development environment. We will need this information later:
-
-<code language="processing">table.writeAsTable(5);</code>
+<code language="processing">geoMap.getAttributes().writeAsTable(5);</code>
 
 In {{{draw()}}} we set the stroke colour (black) before we draw our map. This is because we turn off the stroke later, when we draw a semi-transparent white rectangle at the top of the sketch:
 
@@ -179,9 +165,9 @@ fill(255, 192);
 rect(0, 0, width, 20);
 }}}
 
-We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we get the name of the country under the mouse and store it in a variable called {{{name}}}. (We know that country names are in column {{{4}}} of the map's attribute table because we looked at the console in the Processing development environment.) Notice how we use {{{Integer.toString()}}} to convert {{{id}}} from an {{{int}}} to a {{{String}}}:
+We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we get the name of the country under the mouse and store it in a variable called {{{name}}}. (We know that country names are in column {{{4}}} of our map's attribute table because we looked at the console in the Processing development environment.) Notice how we use {{{Integer.toString()}}} to convert {{{id}}} from an {{{int}}} to a {{{String}}}:
 
-<code language="processing">String name = table.getString(Integer.toString(id), 4);</code>
+<code language="processing">String name = geoMap.getAttributes().getString(Integer.toString(id), 4);</code>
 
 We set the fill colour and the text alignment, and draw the country name to the screen:
 
