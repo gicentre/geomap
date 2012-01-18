@@ -53,6 +53,8 @@ In {{{draw()}}} we first set the background colour (blue) and the fill colour (g
 
 Finally, we click the run button and admire our world map.
 
+[http://gicentre-geomap.googlecode.com/svn/trunk/GeoMap/examples/Simple_world_map/Simple_world_map.png]
+
 ==Draw a simple interactive world map==
 
 This sketch adds interaction to the [#Draw_a_simple_world_map simple world map].
@@ -102,6 +104,8 @@ if (id != -1)
 }}}
 
 Finally, we click the run button and admire our interactive world map.
+
+[http://gicentre-geomap.googlecode.com/svn/trunk/GeoMap/examples/Simple_interactive_world_map/Simple_interactive_world_map.png]
 
 ==Query a simple interactive world map==
 
@@ -178,3 +182,5 @@ text(name, 0, 0, width, 20);
 }}}
 
 Finally, we click the run button and admire our interactive world map.
+
+[http://gicentre-geomap.googlecode.com/svn/trunk/GeoMap/examples/Query_world_map/Query_world_map.png]
