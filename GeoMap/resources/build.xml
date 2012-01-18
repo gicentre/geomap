@@ -6,6 +6,11 @@
 	build instructions.
 	It is based on the Eclipse Library Template, which is available from:
 	<http://code.google.com/p/processing/wiki/LibraryTemplate>
+
+	You should refresh your workspace immediately after running build.xml.
+	Go to "Preferences" -> "General" -> "Workspace" and set "Refresh using native
+	hooks or polling" to make this automatic.
+
 	@author Iain Dillingham <iain@dillingham.me.uk>
 	@version 1.0, 18th January 2012
 -->
@@ -23,6 +28,10 @@
 	<condition property="is.compile_data">
 		<equals arg1="${project.compile_data}" arg2="true"/>
 	</condition>
+	
+	<condition property="is.generate_javadoc">
+		<equals arg1="${project.generate_javadoc}" arg2="true"/>
+	</condition>
 
 	<!-- Set classpath -->
 	<path id="classpath">
@@ -30,12 +39,12 @@
 		<fileset dir="${classpath.libraries.location}" includes="**/*.jar"/>
 	</path>
 	
-	<!-- Clean -->
+	<!-- Clean (3) -->
 	<target name="clean" depends="run">
 		<delete dir="${project.tmp}"/>
 	</target>
 	
-	<!-- Run -->
+	<!-- Run (2) -->
 	<target name="run" depends="init">
 		<antcall target="generate.structure"></antcall>
 		<antcall target="compile"></antcall>
@@ -47,7 +56,7 @@
 		<antcall target="generate.zip"></antcall>
 	</target>
 
-	<!-- Initialise -->
+	<!-- Initialise (1) -->
 	<target name="init">
 		<echo>
 Building ${project.name}
@@ -61,7 +70,7 @@ Classpath local location: ${classpath.local.location}
 Classpath libraries location: ${classpath.libraries.location}
 Java version: ${java.target.version}
 		</echo>
-		<delete dir="${project.bin}"/><!-- A bin directory may predate the first run of this build process -->
+		<delete dir="${project.bin}"/>
 		<mkdir dir="${project.bin}"/>
 	</target>
 
@@ -107,14 +116,18 @@ Java version: ${java.target.version}
 
 	<!-- Generate jar -->
 	<target name="generate.jar">
-		<jar jarfile="${project.tmp}/${project.name}/library/${project.name}.jar" basedir="${project.bin}"/>
+		<jar jarfile="${project.tmp}/${project.name}/library/${project.name}.jar" basedir="${project.bin}" excludes="${project.excludes}"/>
 	</target>
 	
-	<!-- Generate JavaDoc -->
-	<target name="generate.javadoc">
+	<!-- Generate JavaDoc (conditional) -->
+	<target name="generate.javadoc" if="${is.generate_javadoc}">
 		<javadoc destdir="${project.tmp}/${project.name}/reference" classpath="${project.bin};${classpath.local.location}/${classpath.local.include}" verbose="false">
 			<fileset dir="${project.src}"></fileset>
 		</javadoc>
+		<!-- Copy to Eclipse project -->
+		<copy todir="${project.reference}">
+			<fileset dir="${project.tmp}/${project.name}/reference"/>
+		</copy>
 	</target>
 	
 	<!-- Generate library properties file -->
@@ -122,7 +135,7 @@ Java version: ${java.target.version}
 		<property name="properties.destination" location="${project.tmp}/${project.name}/library.properties"/>
 		<!-- Copy -->
 		<copy file="resources/library.properties" tofile="${properties.destination}"/>
-		<!-- Parse ##placeholder## keywords -->
+		<!-- Parse -->
 		<antcall target="parse.file">
 			<param name="file" value="${properties.destination}"/>
 		</antcall>
@@ -140,7 +153,7 @@ Java version: ${java.target.version}
 		<replaceregexp file="${file}" match="##library.prettyVersion##" replace="${project.prettyVersion}" flags="g"/>
 	</target>
 	
-	<!-- Copy to sketchbook (conditional) -->
+	<!-- Copy library to sketchbook (conditional) -->
 	<target name="copy_library_to_sketchbook" if="${is.copy_library_to_sketchbook}">
 		<delete dir="${sketchbook.location}/libraries/${project.name}"/>
 		<mkdir dir="${sketchbook.location}/libraries/${project.name}"/>
