@@ -1,8 +1,11 @@
 =Examples=
 
-Here are some examples of geoMap in action. To use them, simply copy and paste the code into your Processing development environment.
-
 <wiki:toc />
+
+Here are some examples of geoMap in action. To use them, you will need to:
+
+ * Locate the world data. You will find _world.shp_, _world.dbf_ and _world.shx_ in the data directory of the geoMap library. Open this directory and drag and drop each file into the Processing development environment.
+ * Copy and paste the code into your Processing development environment.
 
 ==Draw a simple world map==
 
