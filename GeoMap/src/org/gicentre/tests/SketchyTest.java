@@ -1,16 +1,19 @@
 package org.gicentre.tests;
 
+import org.gicentre.geomap.DrawableFactory;
+import org.gicentre.geomap.Feature;
+import org.gicentre.geomap.FeatureType;
 import org.gicentre.geomap.GeoMap;
+import org.gicentre.handy.HandyRenderer;
 import org.gicentre.utils.move.ZoomPan;
 
 import processing.core.PApplet;
 import processing.core.PVector;
 
 //  ****************************************************************************************
-/** Tests shapefile reading into geoMap objects, query of the attribute file and mouse-based
- *  spatial query.
+/** Tests the Handy renderer plugin with a geoMap example.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 11th January, 2012.
+ *  @version 1.0, 18th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -29,7 +32,7 @@ import processing.core.PVector;
  */
 
 @SuppressWarnings("serial")
-public class ShapefileTest extends PApplet
+public class SketchyTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
 
@@ -38,13 +41,15 @@ public class ShapefileTest extends PApplet
 	 */
 	public static void main(String[] args)
 	{   
-		PApplet.main(new String[] {"org.gicentre.tests.ShapefileTest"});
+		PApplet.main(new String[] {"org.gicentre.tests.SketchyTest"});
 	}
 
 	// ----------------------------- Object variables ------------------------------
 
-	private GeoMap geoMap;
-	private ZoomPan zoomer;
+	private GeoMap geoMap;				// Map feature data.
+	private ZoomPan zoomer;				// For zooming and panning about the map
+	private HandyRenderer handy;		// Hand drawn renderer.
+	private boolean isHandy;			// Determines whether or not to use handy renderer.
 
 	// ---------------------------- Processing methods -----------------------------
 
@@ -55,21 +60,51 @@ public class ShapefileTest extends PApplet
 		size(800,400);
 		smooth();
 		zoomer = new ZoomPan(this);
-		textFont(createFont("Sans-serif", 20));
+		textFont(loadFont("ArchitectsDaughter-32.vlw"));
+		isHandy = true;
 
-		// Read a global country outlines shapefile.
+		// Load US states as basemap.
 		geoMap = new GeoMap(this);
-		geoMap.readFile("world");
+		geoMap.readFile("usContinental");
 		
-		// Check attribute table has been loaded correctly by printing out the first 5 lines.
-		geoMap.getAttributes().writeAsTable(5);
+		
+		// Create a handy sketchy renderer and add it to each of the non-point features.
+		handy = new HandyRenderer(this);
+		handy.setIsHandy(isHandy);
+		
+		for (Feature feature : geoMap.getFeatures().values())
+		{
+			if (feature.getType() != FeatureType.POINT)
+			{
+				feature.setRenderer(DrawableFactory.createHandyRenderer(handy));
+			}
+		}
 	}
 
 	/** Draws the shapefile data in the sketch.
 	 */
 	public void draw()
 	{   
-		background(180,210,240);
+		background(255);
+		
+		handy.setSeed(123);		// Comment this line out to introduce jittering on redraw.
+		
+		// Set sea drawing style.
+		noStroke();
+		fill(180,210,240,150);
+		handy.setFillGap(6);
+		handy.setFillWeight(6);
+		handy.setBackgroundColour(color(255,0));
+		handy.setHachurePerturbationAngle(0);
+		handy.setHachureAngle(90);
+		handy.rect(0,0,width,height);
+
+		// Set land drawing style
+		handy.setFillGap(0.6f);
+		handy.setFillWeight(0.1f);
+		handy.setBackgroundColour(color(255));
+		handy.setHachurePerturbationAngle(4);
+		handy.setHachureAngle(-49);
 		
 		pushMatrix();
 		zoomer.transform();
@@ -80,11 +115,7 @@ public class ShapefileTest extends PApplet
 		stroke(0,100);
 		geoMap.draw();
 
-		// Highlight Indonesia to test for multi-part polygons.
-		fill(180,120,120);
-		geoMap.draw("Indonesia",3);
-
-		// Allow mouse to highlight countries.
+		// Allow mouse to highlight features.
 		PVector zoomedCoords = zoomer.getMouseCoord();
 		int id = geoMap.getID(zoomedCoords.x, zoomedCoords.y);
 		String name = null;	
@@ -94,13 +125,13 @@ public class ShapefileTest extends PApplet
 			strokeWeight(1);
 			geoMap.draw(id);
 			
-			// Full country name stored in column 3 (4th column) of the attribute table
+			// Feature name stored in column 3 (4th column) of the attribute table
 			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
 		}
 		
 		popMatrix();
 		
-		// Display country name if it has been selected.
+		// Display feature name if it has been selected.
 		if (name != null)
 		{
 			fill(0,140);
@@ -125,5 +156,17 @@ public class ShapefileTest extends PApplet
 	public void mouseDragged()
 	{
 		loop();
+	}
+	
+	@Override
+	public void keyPressed()
+	{
+		// Toggle the handy rendering.
+		if (key == ' ') 
+		{
+			isHandy = !isHandy;
+			handy.setIsHandy(isHandy);
+			loop();
+		}
 	}
 }
