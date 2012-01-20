@@ -209,7 +209,7 @@ public class ShapefileWriter
 				Object rowObjects[] = new Object[maxWidths.length];
 				for (int col=0; col<rowObjects.length; col++)
 				{
-					String attrib = attributes.getString(row, col);
+					String attrib = attributes.getStringAt(row, col);
 					rowObjects[col] = attrib.substring(0, Math.min(254,attrib.length()));
 				}
 				writer.write(rowObjects);
