@@ -1,0 +1,163 @@
+<!--
+    Instructions for building your Processing library.
+    It is based on the Eclipse Library Template, which is available from:
+    <http://code.google.com/p/processing/wiki/LibraryTemplate>
+
+    @author Iain Dillingham <iain@dillingham.me.uk>
+    @version 1.0, 20th January 2012
+-->
+<project name="Processing Library Template" default="clean" basedir="../../">
+
+    <!-- Properties -->
+    <property file="resources/build.properties" />
+    <property name="build.line" value="----------------------------------------" />
+    <property name="build.src" value="src" />
+    <property name="build.bin" value="bin" />
+    <property name="build.tmp" value="temp" />
+    <property name="build.dst" value="dist" />
+    <property name="build.doc" value="reference" />
+
+    <!-- Clean up -->
+    <target name="clean" depends="run">
+        <echo>Cleaning up</echo>
+        <delete dir="${build.tmp}" />
+    </target>
+
+    <!-- Run build process -->
+    <target name="run" depends="initialise">
+        <echo>Running build process</echo>
+        <antcall target="generate.binaries" />
+        <antcall target="generate.javadoc" />
+        <antcall target="generate.distribution" />
+    </target>
+
+    <!-- Initialise -->
+    <target name="initialise">
+        <echo>Initialising ${project.name}</echo>
+        <echo>${build.line}</echo>
+        <delete dir="${build.bin}" />
+        <mkdir dir="${build.bin}" />
+    </target>
+
+    <!-- Generate binaries -->
+    <target name="generate.binaries">
+        <javac srcdir="${build.src}" destdir="${build.bin}" target="${build.java.version}" source="${build.java.version}" includeantruntime="false">
+            <classpath>
+                <fileset dir="${build.processing.core}" includes="core.jar" />
+                <fileset dir="${build.processing.libraries}" includes="**/*.jar" />
+            </classpath>
+        </javac>
+        <antcall target="copy.data.binaries" />
+    </target>
+
+    <!-- Copy data directory to binaries directory (if the data directory is set) -->
+    <target name="copy.data.binaries" if="build.data">
+        <copy todir="${build.bin}/data">
+            <fileset dir="${build.data}" />
+        </copy>
+    </target>
+
+    <!-- Generate JavaDoc documentation (conditional) -->
+    <target name="generate.javadoc" if="${is.generate.javadoc}">
+        <echo>Generating JavaDoc documentation</echo>
+        <javadoc destdir="${build.doc}" classpath="${build.bin};${build.processing.core}/core.jar">
+            <fileset dir="${build.src}" />
+        </javadoc>
+    </target>
+
+    <!-- Generate distribution (conditional) -->
+    <target name="generate.distribution" if="${is.generate.distribution}">
+        <echo>Generating distribution</echo>
+
+        <!-- Generate temporary distribution -->
+        <antcall target="generate.structure" />
+        <antcall target="generate.jar" />
+        <antcall target="generate.properties" />
+
+        <!-- Generate website -->
+        <delete dir="${build.dst}" />
+        <copy todir="${build.dst}/web">
+            <fileset dir="resources/web" />
+        </copy>
+        <antcall target="parse">
+            <param name="file" value="${build.dst}/web/index.html" />
+        </antcall>
+        <zip destfile="${build.dst}/web/${project.name}.zip" basedir="${build.tmp}/${project.name}" />
+        <copy file="${build.tmp}/${project.name}/library.properties" tofile="${build.dst}/web/${project.name}.txt" />
+
+        <antcall target="copy.javadoc" />
+        <antcall target="copy.processing.libraries" />
+    </target>
+
+    <!-- Generate temporary structure -->
+    <target name="generate.structure">
+        <echo>Generating temporary structure</echo>
+        <delete dir="${build.tmp}" />
+        <mkdir dir="${build.tmp}/${project.name}" />
+        <antcall target="copy.data.library" />
+        <antcall target="copy.examples.library" />
+    </target>
+
+    <!-- Copy data directory to temporary structure (if the data directory is set) -->
+    <target name="copy.data.library" if="build.data">
+        <copy todir="${build.tmp}/${project.name}/data">
+            <fileset dir="${build.data}" />
+        </copy>
+    </target>
+
+    <!-- Copy examples directory to temporary structure (if the examples directory is set) -->
+    <target name="copy.examples.library" if="build.examples">
+        <copy todir="${build.tmp}/${project.name}/examples">
+            <fileset dir="${build.examples}" />
+        </copy>
+    </target>
+
+    <!-- Generate jar file -->
+    <target name="generate.jar">
+        <echo>Generating jar file</echo>
+        <jar destfile="${build.tmp}/${project.name}/library/${project.name}.jar" basedir="${build.bin}" excludes="${build.jar.excludes}" />
+    </target>
+
+    <!-- Generate properties file -->
+    <target name="generate.properties">
+        <echo>Generating properties file</echo>
+        <copy file="resources/build/library.properties" tofile="${build.tmp}/${project.name}/library.properties" />
+        <antcall target="parse">
+            <param name="file" value="${build.tmp}/${project.name}/library.properties" />
+        </antcall>
+    </target>
+
+    <!-- Parse keywords -->
+    <target name="parse">
+        <replaceregexp file="${file}" match="##project.name##" replace="${project.name}" flags="g" />
+        <replaceregexp file="${file}" match="##project.authors###" replace="${project.authors}" flags="g" />
+        <replaceregexp file="${file}" match="##project.url##" replace="${project.url}" flags="g" />
+        <replaceregexp file="${file}" match="##project.category##" replace="${project.category}" flags="g" />
+        <replaceregexp file="${file}" match="##project.keywords##" replace="${project.keywords}" flags="g" />
+        <replaceregexp file="${file}" match="##project.sentence##" replace="${project.sentence}" flags="g" />
+        <replaceregexp file="${file}" match="##project.paragraph##" replace="${project.paragraph}" flags="g" />
+        <replaceregexp file="${file}" match="##project.version##" replace="${project.version}" flags="g" />
+        <replaceregexp file="${file}" match="##project.prettyversion##" replace="${project.prettyversion}" flags="g" />
+        <!-- Regular expression for [name](url) link syntax. Thanks to Phil Gooch. -->
+        <replaceregexp file="${file}" match="\[([^\]]*)\]\(([^\)]*)\)" replace="&lt;a href='\2'>\1&lt;/a&gt;" flags="g" />
+    </target>
+
+    <!-- Copy JavaDoc documentation to temporary structure and to website (conditional) -->
+    <target name="copy.javadoc" if="${is.generate.javadoc}">
+        <copy todir="${build.tmp}/${project.name}/reference">
+            <fileset dir="${build.doc}" />
+        </copy>
+        <copy todir="${build.dst}/web/reference">
+            <fileset dir="${build.doc}" />
+        </copy>
+    </target>
+
+    <!-- Copy library files to Processing's contributed libraries directory (conditional) -->
+    <target name="copy.processing.libraries" if="${is.copy.processing.libraries}">
+        <delete dir="${build.processing.libraries}/${project.name}" />
+        <copy todir="${build.processing.libraries}/${project.name}">
+            <fileset dir="${build.tmp}/${project.name}" />
+        </copy>
+    </target>
+
+</project>
