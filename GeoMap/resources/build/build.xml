@@ -35,7 +35,6 @@
     <target name="initialise">
         <echo>Initialising ${project.name}</echo>
         <echo>${build.line}</echo>
-        <delete dir="${build.bin}" />
         <mkdir dir="${build.bin}" />
     </target>
 
@@ -52,7 +51,7 @@
 
     <!-- Copy data directory to binaries directory (if the data directory is set) -->
     <target name="copy.data.binaries" if="build.data">
-        <copy todir="${build.bin}/data">
+        <copy todir="${build.bin}/data" preservelastmodified="true">
             <fileset dir="${build.data}" />
         </copy>
     </target>
@@ -100,14 +99,14 @@
 
     <!-- Copy data directory to temporary structure (if the data directory is set) -->
     <target name="copy.data.library" if="build.data">
-        <copy todir="${build.tmp}/${project.name}/data">
+        <copy todir="${build.tmp}/${project.name}/data" preservelastmodified="true">
             <fileset dir="${build.data}" />
         </copy>
     </target>
 
     <!-- Copy examples directory to temporary structure (if the examples directory is set) -->
     <target name="copy.examples.library" if="build.examples">
-        <copy todir="${build.tmp}/${project.name}/examples">
+        <copy todir="${build.tmp}/${project.name}/examples" preservelastmodified="true">
             <fileset dir="${build.examples}" />
         </copy>
     </target>
@@ -144,10 +143,10 @@
 
     <!-- Copy JavaDoc documentation to temporary structure and to website (conditional) -->
     <target name="copy.javadoc" if="${is.generate.javadoc}">
-        <copy todir="${build.tmp}/${project.name}/reference">
+        <copy todir="${build.tmp}/${project.name}/reference" preservelastmodified="true">
             <fileset dir="${build.doc}" />
         </copy>
-        <copy todir="${build.dst}/web/reference">
+        <copy todir="${build.dst}/web/reference" preservelastmodified="true">
             <fileset dir="${build.doc}" />
         </copy>
     </target>
@@ -155,7 +154,7 @@
     <!-- Copy library files to Processing's contributed libraries directory (conditional) -->
     <target name="copy.processing.libraries" if="${is.copy.processing.libraries}">
         <delete dir="${build.processing.libraries}/${project.name}" />
-        <copy todir="${build.processing.libraries}/${project.name}">
+        <copy todir="${build.processing.libraries}/${project.name}" preservelastmodified="true">
             <fileset dir="${build.tmp}/${project.name}" />
         </copy>
     </target>
