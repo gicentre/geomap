@@ -168,7 +168,7 @@ public class Table
 	 */
 	public String getRowName(int row)
 	{
-		return getString(row, 0);
+		return getStringAt(row, 0);
 	}
 
 	/** Reports the item at the given row and column location as a String.
@@ -176,7 +176,7 @@ public class Table
 	 *  @param column Column of the table value to retrieve.
 	 *  @return Table value at the given column reported as a string.
 	 */
-	public String getString(int rowIndex, int column)
+	public String getStringAt(int rowIndex, int column)
 	{
 		if ((rowIndex < 0) || (rowIndex >= data.length))
 		{
@@ -203,9 +203,9 @@ public class Table
 		HashSet<Integer>matches = new HashSet<Integer>();
 		for (int row=0; row<rowCount; row++)
 		{
-			if (attribute.equals(getString(row,col)))
+			if (attribute.equals(getStringAt(row,col)))
 			{
-				matches.add(new Integer(getString(row, 0)));
+				matches.add(new Integer(getStringAt(row, 0)));
 			}
 		}
 		return matches;
@@ -218,7 +218,17 @@ public class Table
 	 */
 	public String getString(String rowName, int column)
 	{
-		return getString(getRowIndex(rowName), column);
+		return getStringAt(getRowIndex(rowName), column);
+	}
+
+    /** Reports the item in the given column and row with the given name as a String.
+     *  @param rowName Attribute value of column 0 (first row to contain it).
+     *  @param column Column of the table value to retrieve.
+     *  @return Table value at the given column reported as a string.
+     */
+	public String getString(int rowName, int column)
+	{
+	    return getStringAt(getRowIndex(Integer.toString(rowName)), column);
 	}
 
 	/** Reports the item at the given row and column location as a whole number.
@@ -226,9 +236,9 @@ public class Table
 	 *  @param column Column of the table value to retrieve.
 	 *  @return Table value at the given column reported as a whole number.
 	 */
-	public int getInt(int rowIndex, int column) 
+	public int getIntAt(int rowIndex, int column) 
 	{
-		return PApplet.parseInt(getString(rowIndex, column));
+		return PApplet.parseInt(getStringAt(rowIndex, column));
 	}
 
 	/** Reports the item at the given row and column location as a whole number.
@@ -240,15 +250,25 @@ public class Table
 	{
 		return PApplet.parseInt(getString(rowName, column));
 	}
+	
+    /** Reports the item at the given row and column location as a whole number.
+     *  @param rowName Attribute value of column 0 (first row to contain it).
+     *  @param column Column of the table value to retrieve.
+     *  @return Table value at the given column reported as a whole number.
+     */
+	public int getInt(int rowName, int column)
+	{
+	    return PApplet.parseInt(getString(Integer.toString(rowName), column));
+	}
 
 	/** Reports the item at the given row and column location as a decimal number.
 	 *  @param rowIndex Row of the table value to retrieve.
 	 *  @param column Column of the table value to retrieve.
 	 *  @return Table value at the given column reported as a decimal number.
 	 */
-	public float getFloat(int rowIndex, int column)
+	public float getFloatAt(int rowIndex, int column)
 	{
-		return PApplet.parseFloat(getString(rowIndex, column));
+		return PApplet.parseFloat(getStringAt(rowIndex, column));
 	}
 
 	/** Reports the item at the given row and column location as a decimal number.
@@ -259,6 +279,16 @@ public class Table
 	public float getFloat(String rowName, int column)
 	{
 		return PApplet.parseFloat(getString(rowName, column));
+	}
+	
+    /** Reports the item at the given row and column location as a decimal number.
+     *  @param rowName Attribute value of column 0 (first row to contain it).
+     *  @param column Column of the table value to retrieve.
+     *  @return Table value at the given column reported as a decimal number.
+     */
+	public float getFloat(int rowName, int column)
+	{
+	    return PApplet.parseFloat(getString(Integer.toString(rowName), column));
 	}
 
 
