@@ -1,7 +1,7 @@
 /*
   Draws a simple interactive world map that you can query.
   It uses the giCentre's geoMap library.
-  Iain Dillingham, 18th January 2011.
+  Iain Dillingham, 20th January 2011.
 */
 import org.gicentre.geomap.*;
 
@@ -36,7 +36,7 @@ void draw()
 
   if (id != -1)
   {
-    String name = geoMap.getAttributes().getString(Integer.toString(id), 4);
+    String name = geoMap.getAttributes().getString(id, 4);
     fill(0);
     textAlign(LEFT, CENTER);
     text(name, 0, 0, width, 20);
