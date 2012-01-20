@@ -115,6 +115,11 @@ Finally, we click the run button and admire our interactive world map.
 This sketch builds on the [#Draw_a_simple_interactive_world_map simple interactive world map]. As well as highlighting, country names are displayed at the top of the sketch.
 
 {{{
+/*
+  Draws a simple interactive world map that you can query.
+  It uses the giCentre's geoMap library.
+  Iain Dillingham, 18th January 2011.
+*/
 import org.gicentre.geomap.*;
 
 GeoMap geoMap;
@@ -148,7 +153,7 @@ void draw()
 
   if (id != -1)
   {
-    String name = geoMap.getAttributes().getString(Integer.toString(id), 4);
+    String name = geoMap.getAttributes().getString(id, 4);
     fill(0);
     textAlign(LEFT, CENTER);
     text(name, 0, 0, width, 20);
@@ -172,9 +177,7 @@ fill(255, 192);
 rect(0, 0, width, 20);
 }}}
 
-We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we get the name of the country under the mouse and store it in a variable called {{{name}}}. (We know that country names are in column {{{4}}} of our map's attribute table because we looked at the console in the Processing development environment.) Notice how we use {{{Integer.toString()}}} to convert {{{id}}} from an {{{int}}} to a {{{String}}}:
-
-<code language="processing">String name = geoMap.getAttributes().getString(Integer.toString(id), 4);</code>
+We test to see whether {{{id}}} is not {{{-1}}}. If this is the case, we get the name of the country under the mouse and store it in a variable called {{{name}}}. (We know that country names are in column {{{4}}} of our map's attribute table because we looked at the console in the Processing development environment.)
 
 We set the fill colour and the text alignment, and draw the country name to the screen:
 
