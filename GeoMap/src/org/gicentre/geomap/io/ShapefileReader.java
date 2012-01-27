@@ -23,7 +23,7 @@ import processing.core.PApplet;
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 11th January, 2012.
+ *  @version 3.1, 27th January, 2012.
  */
 //  **************************************************************************************************
 
@@ -904,11 +904,11 @@ public class ShapefileReader
 			while (reader.hasNext()) 
 			{      
 				Object[] atts = reader.readSimpleEntry();
-				attributes.setInt(id-1, 0, id);
+				attributes.setIntAt(id-1, 0, id);
 				
 				for (int i=0; i<atts.length; i++)
 				{
-					attributes.setString(id-1, i+1, atts[i].toString());
+					attributes.setStringAt(id-1, i+1, atts[i].toString());
 				}
 				id++;
 			}
