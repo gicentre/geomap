@@ -10,7 +10,8 @@ import processing.core.PConstants;
 
 //  ****************************************************************************************
 /** Class for representing a table of attributes suitable for querying.
- *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by Jo Wood.
+ *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by 
+ *          Jo Wood and Iain Dillingham.
  *  @version 2.2, 27th January, 2012.
  */ 
 //  ****************************************************************************************
@@ -324,11 +325,21 @@ public class Table
 	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
 	 *  @param value New value to be associated with the given table cell.
 	 */
+	public void setString(int id, int columnIndex, String value)
+	{
+		data[getRowIndex(id)][columnIndex] = value;
+	}
+	
+	/** Sets the value at the given row and column as the given String.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
+	 */
 	public void setString(String id, int columnIndex, String value)
 	{
 		data[getRowIndex(id)][columnIndex] = value;
 	}
-
+	
 	/** Sets the value at the given row and column location as the given whole number.
 	 *  @param rowIndex Row of the table value to change (0 is the first row, 1 is the second etc.).
 	 *  @param columnIndex Column of the table value to change (0 is the first column, 1 is the second etc.).
@@ -346,7 +357,17 @@ public class Table
 	 */
 	public void setInt(String id, int columnIndex, int value) 
 	{
-		data[ getRowIndex(id)][columnIndex] = PApplet.str(value);
+		data[getRowIndex(id)][columnIndex] = PApplet.str(value);
+	}
+	
+	/** Sets the value at the given row and column as the given whole number.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
+	 */
+	public void setInt(int id, int columnIndex, int value) 
+	{
+		data[getRowIndex(id)][columnIndex] = PApplet.str(value);
 	}
 
 	/** Sets the value at the given row and column location as the given decimal number.
@@ -368,6 +389,18 @@ public class Table
 	{
 		data[getRowIndex(id)][columnIndex] = PApplet.str(value);
 	}
+	
+	/** Sets the value at the given row and column as the given decimal number.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
+	 */
+	public void setFloat(int id, int columnIndex, float value)
+	{
+		data[getRowIndex(id)][columnIndex] = PApplet.str(value);
+	}
+	
+	// ---------------------------- Formatting methods ----------------------------
 	
 	/** Calculates the maximium widths of the values in each column. A width is the number
 	 *  of characters in a cell.
