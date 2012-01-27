@@ -11,7 +11,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Class for representing a table of attributes suitable for querying.
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by Jo Wood.
- *  @version 2.2, 11th January, 2012.
+ *  @version 2.2, 27th January, 2012.
  */ 
 //  ****************************************************************************************
 
@@ -144,227 +144,232 @@ public class Table
 		return rowCount;
 	}
 
-	/** Finds a row by its name.
-	 *  @param name Name to query.
-	 *  @return Row index corresponding to the first primary attribute that matches the given name
-	 *          or -1 if now row is matched.
+	/** Finds a row by its ID. The ID is always stored the first column.
+	 *  @param id ID of the row to search for.
+	 *  @return Row index corresponding to the first row containing the given ID or -1 if no ID is found.
 	 */
-	public int getRowIndex(String name)
+	public int getRowIndex(String id)
 	{
 		for (int i=0; i<rowCount; i++)
 		{
-			if (data[i][0].equals(name)) 
+			if (data[i][0].equals(id)) 
 			{
 				return i;
 			}
 		}
-		System.err.println("No row named '" + name + "' was found");
+		System.err.println("No row with ID '" +id+ "' was found");
 		return -1;
 	}
+	
+	/** Finds a row by its ID. The ID is always stored the first column.
+	 *  @param id ID of the row to search for.
+	 *  @return Row index corresponding to the first row containing the given ID or -1 if no ID is found.
+	 */
+	public int getRowIndex(int id)
+	{
+		return getRowIndex(Integer.toString(id));
+	}
 
-	/** Reports the name of the given row (the item in column 0).
-	 *  @param row Row index to query.
+	/** Reports the id of the row at the given row index (first row is 0, second is 1 etc.).
+	 *  @param rowIndex Row index to query.
 	 *  @return First column value associated with the given row index.
 	 */
-	public String getRowName(int row)
+	public String getRowName(int rowIndex)
 	{
-		return getStringAt(row, 0);
+		return getStringAt(rowIndex, 0);
 	}
 
 	/** Reports the item at the given row and column location as a String.
-	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @return Table value at the given column reported as a string.
+	 *  @param rowIndex Row index of the table value to retrieve (first row is 0, second is 1 etc.).
+	 *  @param columnIndex Column index of the table value to retrieve. (first column is 0, second is 1 etc.).
+	 *  @return Table value at the given location reported as a string.
 	 */
-	public String getStringAt(int rowIndex, int column)
+	public String getStringAt(int rowIndex, int columnIndex)
 	{
 		if ((rowIndex < 0) || (rowIndex >= data.length))
 		{
-			System.err.println("Unknown row: "+rowIndex+" when querying table.");
+			System.err.println("Unknown row index: "+rowIndex+" when querying table.");
 			return "";
 		}
 		
-		if ((column < 0) || (column >= data[rowIndex].length))
+		if ((columnIndex < 0) || (columnIndex >= data[rowIndex].length))
 		{
-			System.err.println("Unknown column: "+column+" when querying row "+rowIndex+" in table.");
+			System.err.println("Unknown column index: "+columnIndex+" when querying row "+rowIndex+" in table.");
 			return "";
 		}
-
-		return data[rowIndex][column];
+		return data[rowIndex][columnIndex];
 	}
 	
-	/** Reports the ids of all items in the given column that match the given text
+	/** Reports the ids of all items at the given column index that match the given text
 	 *  @param attribute Text to search for.
-	 *  @param col Column in table to search.
+	 *  @param columnIndex Column in table to search (first column is 0, second is 1 etc.).
 	 *  @return List of ids corresponding to matched text. Will be an empty list if no matches found.
 	 */
-	public Set<Integer> match(String attribute, int col)
+	public Set<Integer> match(String attribute, int columnIndex)
 	{
 		HashSet<Integer>matches = new HashSet<Integer>();
 		for (int row=0; row<rowCount; row++)
 		{
-			if (attribute.equals(getStringAt(row,col)))
+			if (attribute.equals(getStringAt(row,columnIndex)))
 			{
 				matches.add(new Integer(getStringAt(row, 0)));
 			}
 		}
 		return matches;
 	}
-
-	/** Reports the item in the given column and row with the given name as a String.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
+	
+	/** Reports the item in the given column position with the given ID as a String.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
 	 *  @return Table value at the given column reported as a string.
 	 */
-	public String getString(String rowName, int column)
+	public String getString(String id, int columnIndex)
 	{
-		return getStringAt(getRowIndex(rowName), column);
+		return getStringAt(getRowIndex(id), columnIndex);
 	}
 
-    /** Reports the item in the given column and row with the given name as a String.
-     *  @param rowName Attribute value of column 0 (first row to contain it).
-     *  @param column Column of the table value to retrieve.
-     *  @return Table value at the given column reported as a string.
-     */
-	public String getString(int rowName, int column)
+	/** Reports the item in the row with the given ID at the given column location as a String.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given column reported as a string.
+	 */
+	public String getString(int id, int columnIndex)
 	{
-	    return getStringAt(getRowIndex(Integer.toString(rowName)), column);
+	    return getStringAt(getRowIndex(Integer.toString(id)), columnIndex);
 	}
 
 	/** Reports the item at the given row and column location as a whole number.
 	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @return Table value at the given column reported as a whole number.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a whole number.
 	 */
-	public int getIntAt(int rowIndex, int column) 
+	public int getIntAt(int rowIndex, int columnIndex) 
 	{
-		return PApplet.parseInt(getStringAt(rowIndex, column));
+		return PApplet.parseInt(getStringAt(rowIndex, columnIndex));
 	}
 
-	/** Reports the item at the given row and column location as a whole number.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
-	 *  @return Table value at the given column reported as a whole number.
+	/** Reports the item in the row with the given ID at the given column location as a whole number.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a whole number.
 	 */
-	public int getInt(String rowName, int column) 
+	public int getInt(String id, int columnIndex) 
 	{
-		return PApplet.parseInt(getString(rowName, column));
+		return PApplet.parseInt(getString(id, columnIndex));
 	}
 	
-    /** Reports the item at the given row and column location as a whole number.
-     *  @param rowName Attribute value of column 0 (first row to contain it).
-     *  @param column Column of the table value to retrieve.
-     *  @return Table value at the given column reported as a whole number.
-     */
-	public int getInt(int rowName, int column)
+	/** Reports the item in the row with the given ID at the given column location as a whole number.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a whole number.
+	 */
+	public int getInt(int id, int columnIndex)
 	{
-	    return PApplet.parseInt(getString(Integer.toString(rowName), column));
+	    return PApplet.parseInt(getString(Integer.toString(id), columnIndex));
 	}
 
 	/** Reports the item at the given row and column location as a decimal number.
 	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @return Table value at the given column reported as a decimal number.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a decimal number.
 	 */
-	public float getFloatAt(int rowIndex, int column)
+	public float getFloatAt(int rowIndex, int columnIndex)
 	{
-		return PApplet.parseFloat(getStringAt(rowIndex, column));
+		return PApplet.parseFloat(getStringAt(rowIndex, columnIndex));
 	}
 
-	/** Reports the item at the given row and column location as a decimal number.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
-	 *  @return Table value at the given column reported as a decimal number.
+	/** Reports the item in the row with the given ID at the given column location as a decimal number.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a decimal number.
 	 */
-	public float getFloat(String rowName, int column)
+	public float getFloat(String id, int columnIndex)
 	{
-		return PApplet.parseFloat(getString(rowName, column));
+		return PApplet.parseFloat(getString(id, columnIndex));
 	}
 	
-    /** Reports the item at the given row and column location as a decimal number.
-     *  @param rowName Attribute value of column 0 (first row to contain it).
-     *  @param column Column of the table value to retrieve.
-     *  @return Table value at the given column reported as a decimal number.
-     */
-	public float getFloat(int rowName, int column)
+	/** Reports the item in the row with the given ID at the given column location as a decimal number.
+	 *  @param id ID of the row to query.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc).
+	 *  @return Table value at the given row and column location reported as a decimal number.
+	 */
+	public float getFloat(int id, int columnIndex)
 	{
-	    return PApplet.parseFloat(getString(Integer.toString(rowName), column));
+	    return PApplet.parseFloat(getString(Integer.toString(id), columnIndex));
+	}
+	
+	// ------------------------------------ Mutators ------------------------------------
+	
+	/** Sets the ID of the given row. This item will be stored in column 0 of the row.
+	 *  @param rowIndex Row in which to set the name (0 is the first row, 1 the second etc.).
+	 *  @param id New ID (column 0 value) to be associated with the given row.
+	 */
+	public void setRowName(int rowIndex, String id)
+	{
+		data[rowIndex][0] = id;
 	}
 
-
-	/** Sets the name of the given row. This item will be stored in column 0 of the row.
-	 *  @param row Row in which to set the name.
-	 *  @param what New name (column 0 value) to be associated with the given row.
+	/** Sets the value at the given row and column location as the given String.
+	 *  @param rowIndex Row of the table value to change (0 is the first row, 1 is the second etc.).
+	 *  @param columnIndex Column of the table value to change (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
 	 */
-	public void setRowName(int row, String what)
+	public void setStringAt(int rowIndex, int columnIndex, String value) 
 	{
-		data[row][0] = what;
+		data[rowIndex][columnIndex] = value;
 	}
 
 	/** Sets the value at the given row and column as the given String.
-	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New value to be associated with the given table cell.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
 	 */
-	public void setString(int rowIndex, int column, String what) 
+	public void setString(String id, int columnIndex, String value)
 	{
-		data[rowIndex][column] = what;
+		data[getRowIndex(id)][columnIndex] = value;
 	}
 
-	/** Sets the value at the given row and column as the given String.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New value to be associated with the given table cell.
+	/** Sets the value at the given row and column location as the given whole number.
+	 *  @param rowIndex Row of the table value to change (0 is the first row, 1 is the second etc.).
+	 *  @param columnIndex Column of the table value to change (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
 	 */
-	public void setString(String rowName, int column, String what)
+	public void setIntAt(int rowIndex, int columnIndex, int value)
 	{
-		int rowIndex = getRowIndex(rowName);
-		data[rowIndex][column] = what;
-	}
-
-	/** Sets the value at the given row and column as the given whole number.
-	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New whole number value to be associated with the given table cell.
-	 */
-	public void setInt(int rowIndex, int column, int what)
-	{
-		data[rowIndex][column] = PApplet.str(what);
+		data[rowIndex][columnIndex] = PApplet.str(value);
 	}
 
 	/** Sets the value at the given row and column as the given whole number.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New whole number value to be associated with the given table cell.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
 	 */
-	public void setInt(String rowName, int column, int what) 
+	public void setInt(String id, int columnIndex, int value) 
 	{
-		int rowIndex = getRowIndex(rowName);
-		data[rowIndex][column] = PApplet.str(what);
+		data[ getRowIndex(id)][columnIndex] = PApplet.str(value);
+	}
+
+	/** Sets the value at the given row and column location as the given decimal number.
+	 *  @param rowIndex Row of the table value to change (0 is the first row, 1 is the second etc.).
+	 *  @param columnIndex Column of the table value to change (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
+	 */
+	public void setFloatAt(int rowIndex, int columnIndex, float value)
+	{
+		data[rowIndex][columnIndex] = PApplet.str(value);
 	}
 
 	/** Sets the value at the given row and column as the given decimal number.
-	 *  @param rowIndex Row of the table value to retrieve.
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New decimal number value to be associated with the given table cell.
+	 *  @param id ID of the row in which a value will be changed.
+	 *  @param columnIndex Column of the table value to retrieve (0 is the first column, 1 is the second etc.).
+	 *  @param value New value to be associated with the given table cell.
 	 */
-	public void setFloat(int rowIndex, int column, float what)
+	public void setFloat(String id, int columnIndex, float value)
 	{
-		data[rowIndex][column] = PApplet.str(what);
-	}
-
-	/** Sets the value at the given row and column as the given decimal number.
-	 *  @param rowName Attribute value of column 0 (first row to contain it).
-	 *  @param column Column of the table value to retrieve.
-	 *  @param what New decimal number value to be associated with the given table cell.
-	 */
-	public void setFloat(String rowName, int column, float what)
-	{
-		int rowIndex = getRowIndex(rowName);
-		data[rowIndex][column] = PApplet.str(what);
+		data[getRowIndex(id)][columnIndex] = PApplet.str(value);
 	}
 	
-	/** Calculates the maximium widths of the attributes in each column. A width is the number
+	/** Calculates the maximium widths of the values in each column. A width is the number
 	 *  of characters in a cell.
 	 *  @return Maximum width of each of the columns in the table.
 	 */
