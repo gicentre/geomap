@@ -75,7 +75,7 @@ Each {{{GeoMap}}} has one or more features. For example, in a map of the world, 
 Gets the map's features. These will be in a {{{Set}}}. However, in most cases this method will be used to iterate over a map's features as follows:
 
 {{{
-for (int id; geoMap.getFeatures().keySet())
+for (int id : geoMap.getFeatures().keySet())
 {
   geoMap.draw(id);
 }
