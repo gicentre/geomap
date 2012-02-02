@@ -66,6 +66,23 @@ The third draw method draws the features that match the given attribute in the g
  # {{{attribute}}} is the attribute that matches the features to draw. It should be a {{{String}}}. Note that even when {{{attribute}}} is a number, it should be passed as a {{{String}}}. (For example, {{{500}}} should be passed as {{{"500"}}}.)
  # {{{column}}} is the column in the map's attribute table. It should be an {{{int}}}. Note that the first column in the map's attribute table is {{{0}}}, the second is {{{1}}}, the third is {{{2}}} and so on.
 
+==Feature methods==
+
+Each {{{GeoMap}}} has one or more features. For example, in a map of the world, the features might be the countries. Each feature has an id that can be used to query the map's attribute table. Each {{{GeoMap}}} has one feature method.
+
+<code language="processing">geoMap.getFeatures()</code>
+
+Gets the map's features. These will be in a {{{Set}}}. However, in most cases this method will be used to iterate over a map's features as follows:
+
+{{{
+for (int id; geoMap.getFeatures().keySet())
+{
+  geoMap.draw(id);
+}
+}}}
+
+To learn more about iterating over a map's features, see the [Examples#Draw_a_choropleth_map Draw a choropleth map] example.
+
 ==Attribute methods==
 
 Each {{{GeoMap}}} has one or more attributes stored in a {{{Table}}}. The first column in the map's attribute table (column {{{0}}}) stores an id for each feature in the map. Additional columns store attributes read from an [http://en.wikipedia.org/wiki/Shapefile ESRI shapefile] by the {{{geoMap.readFile()}}} method. Each {{{GeoMap}}} has two attribute methods.
