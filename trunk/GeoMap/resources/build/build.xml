@@ -4,7 +4,7 @@
     <http://code.google.com/p/processing/wiki/LibraryTemplate>
 
     @author Iain Dillingham <iain@dillingham.me.uk>
-    @version 1.0, 10th February 2012
+    @version 1.1, 10th February 2012
 -->
 <project name="Processing Library Template" default="clean" basedir="../../">
 
@@ -63,9 +63,8 @@
     <!-- Generate JavaDoc documentation (conditional) -->
     <target name="generate.javadoc" if="${is.generate.javadoc}">
         <echo>Generating JavaDoc documentation</echo>
-        <!-- TODO: Exclude tests -->
         <javadoc destdir="${build.doc}" classpath="${build.bin};${build.processing.core}/core.jar" doctitle="${project.name} API Documentation" bottom="&lt;i&gt;${project.name} version ${project.prettyversion}, API documentation generated on ${build.today}&lt;/i&gt;" stylesheetfile="resources/build/processingapi.min.css">
-            <fileset dir="${build.src}" />
+            <fileset dir="${build.src}" excludes="${build.excludes} **/package.html" />
         </javadoc>
     </target>
 
@@ -125,7 +124,7 @@
     <!-- Generate jar file -->
     <target name="generate.jar">
         <echo>Generating jar file</echo>
-        <jar destfile="${build.tmp}/${project.name}/library/${project.name}.jar" basedir="${build.bin}" excludes="${build.jar.excludes}" />
+        <jar destfile="${build.tmp}/${project.name}/library/${project.name}.jar" basedir="${build.bin}" excludes="${build.excludes}" />
     </target>
 
     <!-- Generate properties file -->
