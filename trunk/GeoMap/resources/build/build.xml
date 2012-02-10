@@ -4,7 +4,7 @@
     <http://code.google.com/p/processing/wiki/LibraryTemplate>
 
     @author Iain Dillingham <iain@dillingham.me.uk>
-    @version 1.0, 20th January 2012
+    @version 1.0, 10th February 2012
 -->
 <project name="Processing Library Template" default="clean" basedir="../../">
 
@@ -16,6 +16,10 @@
     <property name="build.tmp" value="temp" />
     <property name="build.dst" value="dist" />
     <property name="build.doc" value="reference" />
+    <tstamp>
+        <!-- TODO: Add st, nd, rd, th as suffix -->
+        <format property="build.today" pattern="d MMMM, yyyy" />
+    </tstamp>
 
     <!-- Clean up -->
     <target name="clean" depends="run">
@@ -51,7 +55,7 @@
 
     <!-- Copy data directory to binaries directory (if the data directory is set) -->
     <target name="copy.data.binaries" if="build.data">
-        <copy todir="${build.bin}/data" preservelastmodified="true">
+        <copy todir="${build.bin}/data">
             <fileset dir="${build.data}" />
         </copy>
     </target>
@@ -59,7 +63,8 @@
     <!-- Generate JavaDoc documentation (conditional) -->
     <target name="generate.javadoc" if="${is.generate.javadoc}">
         <echo>Generating JavaDoc documentation</echo>
-        <javadoc destdir="${build.doc}" classpath="${build.bin};${build.processing.core}/core.jar">
+        <!-- TODO: Exclude tests -->
+        <javadoc destdir="${build.doc}" classpath="${build.bin};${build.processing.core}/core.jar" doctitle="${project.name} API Documentation" bottom="&lt;i&gt;${project.name} version ${project.prettyversion}, API documentation generated on ${build.today}&lt;/i&gt;" stylesheetfile="resources/build/processingapi.min.css">
             <fileset dir="${build.src}" />
         </javadoc>
     </target>
@@ -81,10 +86,13 @@
         <antcall target="parse">
             <param name="file" value="${build.dst}/web/index.html" />
         </antcall>
-        <zip destfile="${build.dst}/web/${project.name}.zip" basedir="${build.tmp}/${project.name}" />
+        <antcall target="copy.javadoc">
+            <param name="directory" value="${build.dst}/web/reference" />
+        </antcall>
+        <zip destfile="${build.dst}/web/${project.name}.zip" basedir="${build.tmp}" />
         <copy file="${build.tmp}/${project.name}/library.properties" tofile="${build.dst}/web/${project.name}.txt" />
 
-        <antcall target="copy.javadoc" />
+        <!-- Copy library files to Processing's contributed libraries directory -->
         <antcall target="copy.processing.libraries" />
     </target>
 
@@ -95,18 +103,21 @@
         <mkdir dir="${build.tmp}/${project.name}" />
         <antcall target="copy.data.library" />
         <antcall target="copy.examples.library" />
+        <antcall target="copy.javadoc">
+            <param name="directory" value="${build.tmp}/${project.name}/reference" />
+        </antcall>
     </target>
 
     <!-- Copy data directory to temporary structure (if the data directory is set) -->
     <target name="copy.data.library" if="build.data">
-        <copy todir="${build.tmp}/${project.name}/data" preservelastmodified="true">
+        <copy todir="${build.tmp}/${project.name}/data">
             <fileset dir="${build.data}" />
         </copy>
     </target>
 
     <!-- Copy examples directory to temporary structure (if the examples directory is set) -->
     <target name="copy.examples.library" if="build.examples">
-        <copy todir="${build.tmp}/${project.name}/examples" preservelastmodified="true">
+        <copy todir="${build.tmp}/${project.name}/examples">
             <fileset dir="${build.examples}" />
         </copy>
     </target>
@@ -141,12 +152,9 @@
         <replaceregexp file="${file}" match="\[([^\]]*)\]\(([^\)]*)\)" replace="&lt;a href='\2'>\1&lt;/a&gt;" flags="g" />
     </target>
 
-    <!-- Copy JavaDoc documentation to temporary structure and to website (conditional) -->
+    <!-- Copy JavaDoc documentation (conditional) -->
     <target name="copy.javadoc" if="${is.generate.javadoc}">
-        <copy todir="${build.tmp}/${project.name}/reference" preservelastmodified="true">
-            <fileset dir="${build.doc}" />
-        </copy>
-        <copy todir="${build.dst}/web/reference" preservelastmodified="true">
+        <copy todir="${directory}">
             <fileset dir="${build.doc}" />
         </copy>
     </target>
@@ -154,7 +162,7 @@
     <!-- Copy library files to Processing's contributed libraries directory (conditional) -->
     <target name="copy.processing.libraries" if="${is.copy.processing.libraries}">
         <delete dir="${build.processing.libraries}/${project.name}" />
-        <copy todir="${build.processing.libraries}/${project.name}" preservelastmodified="true">
+        <copy todir="${build.processing.libraries}/${project.name}">
             <fileset dir="${build.tmp}/${project.name}" />
         </copy>
     </target>
