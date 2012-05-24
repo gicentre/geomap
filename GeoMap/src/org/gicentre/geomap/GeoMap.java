@@ -97,16 +97,20 @@ public class GeoMap implements Geographic
         }
     }
     
-    /** Draws the feature that matches the given id.
-     * @param id ID of feature to draw.
+    /** Draws the feature that matches the given id. If the id is not found, nothing is drawn.
+     *  @param id ID of feature to draw.
      */
     public void draw(int id)
     {
-    	features.get(new Integer(id)).draw(this);
+    	Feature feature = features.get(new Integer(id));
+		if (feature != null)
+		{
+			feature.draw(this);
+		}
     }
     
     /** Draws all features that match the given attribute stored in the given column of
-     *  the attribute table. If not features are found or the given column is out of bounds,
+     *  the attribute table. If no features are found or the given column is out of bounds,
      *  nothing is drawn
      *  @param attribute Attribute identifying features to draw.
      *  @param col Column in the attribute table (where ID is column 0) to search.
@@ -116,7 +120,11 @@ public class GeoMap implements Geographic
     	Set<Integer> ids = attributes.match(attribute, col);
     	for (Integer id : ids)
     	{
-    		features.get(id).draw(this);
+    		Feature feature = features.get(id);
+    		if (feature != null)
+    		{
+    			feature.draw(this);
+    		}
     	}
     }
     
