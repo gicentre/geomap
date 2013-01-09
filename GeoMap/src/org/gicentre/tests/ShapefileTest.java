@@ -1,5 +1,7 @@
 package org.gicentre.tests;
 
+import java.io.PrintWriter;
+
 import org.gicentre.geomap.GeoMap;
 import org.gicentre.utils.move.ZoomPan;
 
@@ -10,7 +12,7 @@ import processing.core.PVector;
 /** Tests shapefile reading into geoMap objects, query of the attribute file and mouse-based
  *  spatial query.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 11th January, 2012.
+ *  @version 1.1, 9th January, 2013.
  */ 
 //  ****************************************************************************************
 
@@ -61,8 +63,11 @@ public class ShapefileTest extends PApplet
 		geoMap = new GeoMap(this);
 		geoMap.readFile("world");
 		
+		//geoMap.readFile("/Users/jwo/Documents/Processing/mySketches/sketchyLondon/data/bikeAreaExtended");
+		
 		// Check attribute table has been loaded correctly by printing out the first 5 lines.
-		geoMap.getAttributes().writeAsTable(5);
+		//geoMap.getAttributes().writeAsTable(5);
+		geoMap.getAttributes().writeTSV(new PrintWriter(System.out));
 	}
 
 	/** Draws the shapefile data in the sketch.
@@ -95,7 +100,9 @@ public class ShapefileTest extends PApplet
 			geoMap.draw(id);
 			
 			// Full country name stored in column 3 (4th column) of the attribute table
-			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
+			name = geoMap.getAttributeAsString(Integer.toString(id),3);
+			System.out.println(geoMap.getAttributeAsString(Integer.toString(id),0)+","+geoMap.getAttributeAsString(Integer.toString(id),1)+","+geoMap.getAttributeAsString(Integer.toString(id),2)+","+geoMap.getAttributeAsString(Integer.toString(id),3)+","+geoMap.getAttributeAsString(Integer.toString(id),4));
+			System.out.println(geoMap.getAttributeAsInt(Integer.toString(id),0)+","+geoMap.getAttributeAsInt(Integer.toString(id),1)+","+geoMap.getAttributeAsInt(Integer.toString(id),2)+","+geoMap.getAttributeAsInt(Integer.toString(id),3)+","+geoMap.getAttributeAsInt(Integer.toString(id),4));
 		}
 		
 		popMatrix();

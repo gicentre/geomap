@@ -13,17 +13,17 @@ import org.gicentre.geomap.GeoMap;
 import org.gicentre.geomap.Line;
 import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
-import org.gicentre.geomap.Table;
 
 import processing.core.PApplet;
+import processing.data.Table;
 
 //**************************************************************************************************
 /** Readers an ESRI shapefile and populates a GeoMap object with its features and attributes.
- *  A shapefile should consis of 3 separate files - <code><i>name</i>.shp</code> containing the
+ *  A shapefile should consist of 3 separate files - <code><i>name</i>.shp</code> containing the
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 27th January, 2012.
+ *  @version 3.1, 9th January, 2013.
  */
 //  **************************************************************************************************
 
@@ -496,25 +496,28 @@ public class ShapefileReader
 			{
 				pointsInPart = partIndex[part+1]-currentPos;
 			}
-
-			float x[] = new float[pointsInPart];
-			float y[] = new float[pointsInPart];
-
-			for (int coord=0; coord<pointsInPart; coord++)
+			
+			if (pointsInPart >0)
 			{
-				x[coord] = (float)readDoubleLittleEndian(inStream);
-				y[coord] = (float)readDoubleLittleEndian(inStream);
-			}
+				float x[] = new float[pointsInPart];
+				float y[] = new float[pointsInPart];
 
-			if (poly == null)
-			{
-				poly = new Polygon(x,y,parent);
+				for (int coord=0; coord<pointsInPart; coord++)
+				{
+					x[coord] = (float)readDoubleLittleEndian(inStream);
+					y[coord] = (float)readDoubleLittleEndian(inStream);
+				}
+
+				if (poly == null)
+				{
+					poly = new Polygon(x,y,parent);
+				}
+				else
+				{
+					poly.addPart(x,y);
+				}
+				currentPos += pointsInPart;
 			}
-			else
-			{
-				poly.addPart(x,y);
-			}
-			currentPos += pointsInPart;
 		}  
 
 		if (poly != null)
@@ -896,19 +899,22 @@ public class ShapefileReader
 				headings[i] = header.getFieldName(i-1);
 			}
 
-			attributes = new Table(header.getNumRecords(), header.getNumFields()+1,parent);
-			attributes.setHeadings(headings);
+			//attributes = new Table(header.getNumRecords(), header.getNumFields()+1,parent);
+			attributes = new Table(parent);
+			attributes.setColumnCount(header.getNumFields()+1);
+			attributes.setRowCount(header.getNumRecords());
+			attributes.setColumnTitles(headings);
 			int id = 1;
 			
 			// Read in row at a time.
 			while (reader.hasNext()) 
 			{      
 				Object[] atts = reader.readSimpleEntry();
-				attributes.setIntAt(id-1, 0, id);
+				attributes.setInt(id-1, 0, id);
 				
 				for (int i=0; i<atts.length; i++)
 				{
-					attributes.setStringAt(id-1, i+1, atts[i].toString());
+					attributes.setString(id-1, i+1, atts[i].toString());
 				}
 				id++;
 			}

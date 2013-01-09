@@ -11,9 +11,9 @@ import org.gicentre.geomap.GeoMap;
 import org.gicentre.geomap.Line;
 import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
-import org.gicentre.geomap.Table;
 
 import processing.core.PApplet;
+import processing.data.Table;
 
 //  **************************************************************************************************
 /** Writes out a geoMap object as a collection of ESRI shapefiles. A shapefile consists of 3 separate
@@ -22,7 +22,7 @@ import processing.core.PApplet;
  *  <code><i>name</i>.dbf</code> containing the attributes. If a geoMap object contains more than one
  *  object type (point, line or area), a triplet of files is written for each type.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 10th January, 2012.
+ *  @version 3.1, 9th January, 2013.
  */
 //  **************************************************************************************************
 
@@ -44,7 +44,7 @@ public class ShapefileWriter
 {
 	// ----------------------------------- Object variables ------------------------------------
 
-	private int recordNumber;
+	//private int recordNumber;
 	private PApplet parent;
 	private GeoMap geoMap;						// Object to write as a shapefile.	
 
@@ -167,6 +167,37 @@ public class ShapefileWriter
 		} 
 		return true;   
 	}
+	
+	/** Calculates the maximum widths of the values in each column in the attributes table. A width is
+	 *  the number of characters in a cell.
+	 *  @param table Table to examine.
+	 *  @return Maximum width of each of the columns in the table.
+	 */
+	private int[] calcMaxWidths(Table table)
+	{
+		int numCols = table.getColumnCount();
+		int numRows = table.getRowCount();
+		String[] header = table.getColumnTitles();
+		
+		// Find the maximum number of characters in each column.
+		int[] maxWidths = new int[numCols];
+		if (header != null)
+		{
+			for (int col=0; col<header.length; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], header[col].length());
+			}
+		}
+		for (int row=0; row<numRows; row++)
+		{
+			for (int col=0; col<numCols; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], table.getString(row,col).length());
+			}
+		}
+		
+		return maxWidths;
+	}
 
 	/** Writes out the attributes of the given node's children as a DBF file (dBase III format).
 	 *  @param outStream Output stream pointing to the dbf file to write. 
@@ -180,8 +211,8 @@ public class ShapefileWriter
 			DbaseFileHeader header = new DbaseFileHeader();
 			Table attributes = geoMap.getAttributes();
 
-			String[] headings = attributes.getHeadings();
-			int[] maxWidths = attributes.calcMaxWidths();
+			String[] headings = attributes.getColumnTitles();
+			int[] maxWidths = calcMaxWidths(attributes);
 
 			for (int i=0; i<maxWidths.length; i++)
 			{
@@ -209,7 +240,7 @@ public class ShapefileWriter
 				Object rowObjects[] = new Object[maxWidths.length];
 				for (int col=0; col<rowObjects.length; col++)
 				{
-					String attrib = attributes.getStringAt(row, col);
+					String attrib = attributes.getString(row, col);
 					rowObjects[col] = attrib.substring(0, Math.min(254,attrib.length()));
 				}
 				writer.write(rowObjects);
@@ -300,7 +331,7 @@ public class ShapefileWriter
 			writeDoubleLittleEndian(0,indexOut);
 
 			// Add geometry records.
-			recordNumber = 1;
+			//recordNumber = 1;
 			int recordOffset = 50;
 
 			if (type == FeatureType.POINT)
@@ -328,7 +359,7 @@ public class ShapefileWriter
 						writeIntLittleEndian(1,geomOut);     // Point shape type.
 						writeDoubleLittleEndian(point.getCoords().x,geomOut);
 						writeDoubleLittleEndian(point.getCoords().x,geomOut);
-						recordNumber++;
+						//recordNumber++;
 					}
 				}
 			}
@@ -373,7 +404,7 @@ public class ShapefileWriter
 							writeDoubleLittleEndian(x[coord],geomOut);
 							writeDoubleLittleEndian(y[coord],geomOut);
 						}
-						recordNumber++;
+						//recordNumber++;
 					}
 				}
 			}
@@ -424,7 +455,7 @@ public class ShapefileWriter
 							writeDoubleLittleEndian(x[coord],geomOut);
 							writeDoubleLittleEndian(y[coord],geomOut);
 						}
-						recordNumber++;
+						//recordNumber++;
 					}
 				} 
 			}
