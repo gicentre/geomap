@@ -13,7 +13,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests the Handy renderer plugin with a geoMap example.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 18th January, 2012.
+ *  @version 1.1, 9th January, 2013.
  */ 
 //  ****************************************************************************************
 
@@ -58,6 +58,7 @@ public class SketchyTest extends PApplet
 	public void setup()
 	{   
 		size(800,400);
+		//size(1700,900);
 		smooth();
 		zoomer = new ZoomPan(this);
 		textFont(loadFont("ArchitectsDaughter-32.vlw"));
@@ -91,17 +92,21 @@ public class SketchyTest extends PApplet
 		
 		// Set sea drawing style.
 		noStroke();
-		fill(180,210,240,150);
-		handy.setFillGap(6);
+		float darken = 0.7f;
+		fill(180*darken,210*darken,200,80);
+		handy.setFillGap(1);
 		handy.setFillWeight(6);
-		handy.setBackgroundColour(color(255,0));
+		handy.setBackgroundColour(color(255,1));
+		handy.setSecondaryColour(color(50,50,90,10));
+		handy.setUseSecondaryColour(true);
 		handy.setHachurePerturbationAngle(0);
 		handy.setHachureAngle(90);
 		handy.rect(0,0,width,height);
-
+		
 		// Set land drawing style
-		handy.setFillGap(0.6f);
-		handy.setFillWeight(0.1f);
+		handy.setUseSecondaryColour(false);
+		handy.setFillGap(4f);
+		handy.setFillWeight(1.6f);
 		handy.setBackgroundColour(color(255));
 		handy.setHachurePerturbationAngle(4);
 		handy.setHachureAngle(-49);
@@ -111,7 +116,7 @@ public class SketchyTest extends PApplet
 		
 		// Draw entire map.
 		fill(150,190,150);
-		strokeWeight(0.5f);
+		strokeWeight(1.5f);
 		stroke(0,100);
 		geoMap.draw();
 
@@ -121,12 +126,12 @@ public class SketchyTest extends PApplet
 		String name = null;	
 		if (id != -1)
 		{
-			fill(120,150,120);
-			strokeWeight(1);
+			fill(100,125,100);
+			strokeWeight(2);
 			geoMap.draw(id);
 			
 			// Feature name stored in column 3 (4th column) of the attribute table
-			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
+			name = geoMap.getAttributeAsString(Integer.toString(id),3);
 		}
 		
 		popMatrix();

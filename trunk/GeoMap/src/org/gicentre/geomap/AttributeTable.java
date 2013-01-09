@@ -13,6 +13,7 @@ import processing.core.PConstants;
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by 
  *          Jo Wood and Iain Dillingham.
  *  @version 2.2, 27th January, 2012.
+ *  @deprecated Should use Processing 2.x built-in Table class instead.
  */ 
 //  ****************************************************************************************
 
@@ -29,7 +30,7 @@ import processing.core.PConstants;
  * source code (see COPYING.LESSER included with this source code). If not, see
  * http://www.gnu.org/licenses/.
  */
-public class Table
+public class AttributeTable
 {
 	// --------------------------------- Object variables ---------------------------------
 
@@ -43,7 +44,7 @@ public class Table
 	/** Creates a new empty 10 by 10 table.
 	 *  @param parent Sketch controlling the location of files to load and save.
 	 */
-	public Table(PApplet parent) 
+	public AttributeTable(PApplet parent) 
 	{
 		this(10,10,parent);
 	}
@@ -53,7 +54,7 @@ public class Table
 	 *  @param numCols Number of columns in table.
 	 *  @param parent Sketch controlling the location of files to load and save.
 	 */
-	public Table(int numRows, int numCols, PApplet parent) 
+	public AttributeTable(int numRows, int numCols, PApplet parent) 
 	{
 		this.parent = parent;
 		data = new String[numRows][numCols];
@@ -70,7 +71,7 @@ public class Table
 	/** Creates a table from the given tab separated values file.
 	 *  @param filename Name of file containing the TSVs.
 	 */
-	public Table(String filename, PApplet parent) 
+	public AttributeTable(String filename, PApplet parent) 
 	{
 		this.parent = parent;
 		String[] rows = parent.loadStrings(filename);

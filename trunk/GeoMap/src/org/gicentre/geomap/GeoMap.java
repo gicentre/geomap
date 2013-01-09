@@ -1,6 +1,8 @@
 package org.gicentre.geomap;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,11 +12,12 @@ import org.gicentre.geomap.io.ShapefileWriter;
 
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.data.Table;
 
 // *****************************************************************************************
 /** Class for drawing geographic maps in Processing
  *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.0, 11th January, 2012
+ *  @version 1.1, 9th January, 2013
  */
 // *****************************************************************************************
 
@@ -76,7 +79,7 @@ public class GeoMap implements Geographic
         this.minGeoY    = yOrigin;
         this.maxGeoY    = yOrigin+mapHeight;	
         this.features   = new LinkedHashMap<Integer, Feature>();
-        this.attributes = new Table(0,0,parent);
+        this.attributes = new Table(parent);
         this.numPoints  = 0;
         this.numLines   = 0;
         this.numPolys   = 0;
@@ -117,7 +120,9 @@ public class GeoMap implements Geographic
      */
     public void draw(String attribute, int col)
     {
-    	Set<Integer> ids = attributes.match(attribute, col);
+    	Set<Integer> ids = match(attribute, col);
+    	
+    	
     	for (Integer id : ids)
     	{
     		Feature feature = features.get(id);
@@ -301,6 +306,79 @@ public class GeoMap implements Geographic
 		return attributes;
 	}
 	
+	/** Reports the attribute as a string at the given column with the given ID. Column numbering starts
+	 *  at 0 (corresponding to the ID itself), so getAttributeAsString(id,0) should always return id.
+	 *  @param id ID that identifies the row in the attribute table to query.
+	 *  @param columnNumber Column number to query.
+	 *  @return Attribute with the given ID in the given column of the geomap's attribute table.
+	 */
+	public String getAttributeAsString(String id, int columnNumber)
+	{
+		if (attributes == null)
+		{
+			System.err.println("Warning: No attribute table to query.");
+			return "";
+		}
+		if (columnNumber >= attributes.getColumnCount())
+		{
+			System.err.println("Warning: Attribute table has "+attributes.getColumnCount()+" columns, so cannot query column "+columnNumber+". Returning ID.");
+			return id;
+		}		
+		HashMap<String,Integer> idLookup = attributes.getRowLookup(0);
+		int rowNum = idLookup.get(id).intValue();
+		return attributes.getString(rowNum, columnNumber);
+	}
+	
+	/** Reports the attribute as an integer at the given column with the given ID. Column numbering starts
+	 *  at 0 (corresponding to the ID itself), so getAttributeAsInt(id,0) should always return an integer version of the id.
+	 *  @param id ID that identifies the row in the attribute table to query.
+	 *  @param columnNumber Column number to query.
+	 *  @return Attribute with the given ID in the given column of the geomap's attribute table. If the value in the table cannot be represented
+	 *          as an integer, a value of 0 is returned.
+	 */
+	public int getAttributeAsInt(String id, int columnNumber)
+	{
+		if (attributes == null)
+		{
+			System.err.println("Warning: No attribute table to query.");
+			return 0;
+		}
+		if (columnNumber >= attributes.getColumnCount())
+		{
+			System.err.println("Warning: Attribute table has "+attributes.getColumnCount()+" columns, so cannot query column "+columnNumber+". Returning ID.");
+			return PApplet.parseInt(id);	
+		}		
+		
+		HashMap<String,Integer> idLookup = attributes.getRowLookup(0);
+		int rowNum = idLookup.get(id).intValue();
+		return PApplet.parseInt(attributes.getString(rowNum, columnNumber));
+	}
+	
+	/** Reports the attribute as a decimal number at the given column with the given ID. Column numbering starts
+	 *  at 0 (corresponding to the ID itself), so getAttributeAsFloat(id,0) should always return a numerical version of the id.
+	 *  @param id ID that identifies the row in the attribute table to query.
+	 *  @param columnNumber Column number to query.
+	 *  @return Attribute with the given ID in the given column of the geomap's attribute table. If the value in the table cannot be represented
+	 *          as a number, a value of 0 is returned.
+	 */
+	public float getAttributeAsFloat(String id, int columnNumber)
+	{
+		if (attributes == null)
+		{
+			System.err.println("Warning: No attribute table to query.");
+			return 0;
+		}
+		if (columnNumber >= attributes.getColumnCount())
+		{
+			System.err.println("Warning: Attribute table has "+attributes.getColumnCount()+" columns, so cannot query column "+columnNumber+". Returning ID.");
+			return PApplet.parseFloat(id);
+		}		
+		
+		HashMap<String,Integer> idLookup = attributes.getRowLookup(0);
+		int rowNum = idLookup.get(id).intValue();
+		return PApplet.parseFloat(attributes.getString(rowNum, columnNumber));
+	}
+	
 	/** Sets the attribute table to be associated with this geoMap object.
 	 *  @param attributes New attribute table to be associated with this geoMap.
 	 */
@@ -340,4 +418,25 @@ public class GeoMap implements Geographic
 	{
 		return maxGeoY;
 	}
+	
+	// --------------------------------- Private methods ---------------------------------
+	
+	/** Reports the ids of all items at the given column index that match the given text
+	 *  @param attribute Text to search for.
+	 *  @param columnIndex Column in table to search (first column is 0, second is 1 etc.).
+	 *  @return List of ids corresponding to matched text. Will be an empty list if no matches found.
+	 */
+    private Set<Integer>match(String attribute,int columnIndex)
+    {
+
+    	HashSet<Integer>matches = new HashSet<Integer>();
+    	for (int row=0; row<attributes.getRowCount(); row++)
+    	{
+    		if (attribute.equals(attributes.getString(row,columnIndex)))
+    		{
+    			matches.add(new Integer(attributes.getString(row, 0)));
+    		}
+    	}
+    	return matches;
+    }
 }
