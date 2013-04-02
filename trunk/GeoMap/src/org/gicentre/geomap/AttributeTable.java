@@ -12,8 +12,7 @@ import processing.core.PConstants;
 /** Class for representing a table of attributes suitable for querying.
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by 
  *          Jo Wood and Iain Dillingham.
- *  @version 2.2, 27th January, 2012.
- *  @deprecated Should use Processing 2.x built-in Table class instead.
+ *  @version 2.2, 2nd April, 2013.
  */ 
 //  ****************************************************************************************
 
@@ -32,6 +31,10 @@ import processing.core.PConstants;
  */
 public class AttributeTable
 {
+	
+	// TODO: When processing.data.Table is fully developed, use that instead and deprecate AttributeTable.
+	// @deprecated Should use Processing 2.x built-in Table class instead.
+	
 	// --------------------------------- Object variables ---------------------------------
 
 	private String[] header;		// Column headings.
@@ -403,23 +406,14 @@ public class AttributeTable
 	
 	// ---------------------------- Formatting methods ----------------------------
 	
-	/** Calculates the maximium widths of the values in each column. A width is the number
+	/** Calculates the maximum widths of the values in each column. A width is the number
 	 *  of characters in a cell.
 	 *  @return Maximum width of each of the columns in the table.
 	 */
 	public int[] calcMaxWidths()
 	{
 		// Find number of columns. Since the table could be ragged, need to check each row.
-		int numCols = 0;
-		if (header != null)
-		{
-			numCols = header.length;
-		}
-		
-		for (int row=0; row<data.length; row++)
-		{
-			numCols = Math.max(numCols, data[row].length);
-		}
+		int numCols = findNumCols();
 		
 		// Find the maximum number of characters in each column.
 		int[] maxWidths = new int[numCols];
@@ -439,6 +433,26 @@ public class AttributeTable
 		}
 		
 		return maxWidths;
+	}
+	
+	/** Finds the number of columns in the table. Since the table may be ragged, this method will check each row
+	 *  will return the maximum number of columns found in the entire table.
+	 *  @return Maximum number of columns in the table.
+	 */
+	public int findNumCols()
+	{
+		int numCols = 0;
+		
+		if (header != null)
+		{
+			numCols = header.length;
+		}
+		
+		for (int row=0; row<data.length; row++)
+		{
+			numCols = Math.max(numCols, data[row].length);
+		}
+		return numCols;
 	}
 	
 	/** Writes this table in TSV format to standard output.

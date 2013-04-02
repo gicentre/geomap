@@ -131,7 +131,8 @@ public class SketchyTest extends PApplet
 			geoMap.draw(id);
 			
 			// Feature name stored in column 3 (4th column) of the attribute table
-			name = geoMap.getAttributeAsString(Integer.toString(id),3);
+			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
+			//name = geoMap.getAttributeAsString(Integer.toString(id),3);
 		}
 		
 		popMatrix();

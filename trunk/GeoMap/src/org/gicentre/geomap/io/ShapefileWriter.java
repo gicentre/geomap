@@ -5,6 +5,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 
+import org.gicentre.geomap.AttributeTable;
 import org.gicentre.geomap.Feature;
 import org.gicentre.geomap.FeatureType;
 import org.gicentre.geomap.GeoMap;
@@ -13,7 +14,6 @@ import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
 
 import processing.core.PApplet;
-import processing.data.Table;
 
 //  **************************************************************************************************
 /** Writes out a geoMap object as a collection of ESRI shapefiles. A shapefile consists of 3 separate
@@ -22,7 +22,7 @@ import processing.data.Table;
  *  <code><i>name</i>.dbf</code> containing the attributes. If a geoMap object contains more than one
  *  object type (point, line or area), a triplet of files is written for each type.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 9th January, 2013.
+ *  @version 3.1, 2nd April, 2013.
  */
 //  **************************************************************************************************
 
@@ -173,11 +173,11 @@ public class ShapefileWriter
 	 *  @param table Table to examine.
 	 *  @return Maximum width of each of the columns in the table.
 	 */
-	private int[] calcMaxWidths(Table table)
+	private int[] calcMaxWidths(AttributeTable table)
 	{
-		int numCols = table.getColumnCount();
+		int numCols = table.findNumCols();
 		int numRows = table.getRowCount();
-		String[] header = table.getColumnTitles();
+		String[] header = table.getHeadings();
 		
 		// Find the maximum number of characters in each column.
 		int[] maxWidths = new int[numCols];
@@ -209,9 +209,9 @@ public class ShapefileWriter
 		{
 			// Create the dbase header.
 			DbaseFileHeader header = new DbaseFileHeader();
-			Table attributes = geoMap.getAttributes();
+			AttributeTable attributes = geoMap.getAttributes();
 
-			String[] headings = attributes.getColumnTitles();
+			String[] headings = attributes.getHeadings();
 			int[] maxWidths = calcMaxWidths(attributes);
 
 			for (int i=0; i<maxWidths.length; i++)
