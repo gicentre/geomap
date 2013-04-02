@@ -8,6 +8,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.gicentre.geomap.AttributeTable;
 import org.gicentre.geomap.Feature;
 import org.gicentre.geomap.GeoMap;
 import org.gicentre.geomap.Line;
@@ -15,7 +16,6 @@ import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
 
 import processing.core.PApplet;
-import processing.data.Table;
 
 //**************************************************************************************************
 /** Readers an ESRI shapefile and populates a GeoMap object with its features and attributes.
@@ -23,7 +23,7 @@ import processing.data.Table;
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 9th January, 2013.
+ *  @version 3.1, 2nd April, 2013.
  */
 //  **************************************************************************************************
 
@@ -48,7 +48,7 @@ public class ShapefileReader
 	private int recordNumber;						// ID of each record in the shapefile.
 
 	private LinkedHashMap<Integer, Feature>features;// Stores feature geometry.
-	private Table attributes;						// Stores feature attributes.
+	private AttributeTable attributes;				// Stores feature attributes.
 	
 	private PApplet parent;							// Parent sketch.
 	
@@ -228,7 +228,7 @@ public class ShapefileReader
 	/** Provides the attribute table that has been extracted from the shapefile.
 	 *  @return Attribute table from shapefile.
 	 */
-	public Table getAttributes()
+	public AttributeTable getAttributes()
 	{
 		return attributes;
 	}
@@ -899,22 +899,23 @@ public class ShapefileReader
 				headings[i] = header.getFieldName(i-1);
 			}
 
-			//attributes = new Table(header.getNumRecords(), header.getNumFields()+1,parent);
-			attributes = new Table(parent);
-			attributes.setColumnCount(header.getNumFields()+1);
-			attributes.setRowCount(header.getNumRecords());
-			attributes.setColumnTitles(headings);
+			attributes = new AttributeTable(header.getNumRecords(), header.getNumFields()+1,parent);
+			attributes.setHeadings(headings);
+//			attributes = new Table(parent);
+//			attributes.setColumnCount(header.getNumFields()+1);
+//			attributes.setRowCount(header.getNumRecords());
+//			attributes.setColumnTitles(headings);
 			int id = 1;
 			
 			// Read in row at a time.
 			while (reader.hasNext()) 
 			{      
 				Object[] atts = reader.readSimpleEntry();
-				attributes.setInt(id-1, 0, id);
+				attributes.setIntAt(id-1, 0, id);
 				
 				for (int i=0; i<atts.length; i++)
 				{
-					attributes.setString(id-1, i+1, atts[i].toString());
+					attributes.setStringAt(id-1, i+1, atts[i].toString());
 				}
 				id++;
 			}
