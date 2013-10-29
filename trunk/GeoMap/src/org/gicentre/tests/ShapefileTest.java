@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Tests shapefile reading into geoMap objects, query of the attribute file and mouse-based
  *  spatial query.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.1, 9th January, 2013.
+ *  @version 1.2, 29th October, 2013.
  */ 
 //  ****************************************************************************************
 

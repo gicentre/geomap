@@ -13,7 +13,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests the Handy renderer plugin with a geoMap example.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.1, 9th January, 2013.
+ *  @version 1.2, 29th October, 2013.
  */ 
 //  ****************************************************************************************
 
