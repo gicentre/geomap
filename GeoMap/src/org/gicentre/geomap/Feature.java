@@ -3,7 +3,7 @@ package org.gicentre.geomap;
 // *****************************************************************************************
 /** Identifies the behaviour of all features.
  *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.0, 15th January, 2012
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 
@@ -28,7 +28,7 @@ public interface Feature
 	public abstract FeatureType getType();
 	
     /** Should draw the feature in the parent sketch.
-     *  @param transformer Class that will trasform between geographic and screen coordinates.
+     *  @param transformer Class that will transform between geographic and screen coordinates.
      */
     public abstract void draw(Geographic transformer);
     

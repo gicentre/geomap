@@ -14,7 +14,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Class for drawing a polygon in screen coordinate space.
  *  @author Jo Wood and Iain Dillingham, giCentre, City University London.
- *  @version 1.1, 8th January, 2012
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 

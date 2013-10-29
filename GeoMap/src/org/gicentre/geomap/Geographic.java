@@ -5,7 +5,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Identifies the behaviour of a geographic object that can be drawn on screen.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 8th January, 2012
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 

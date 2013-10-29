@@ -12,7 +12,7 @@ import processing.core.PConstants;
 /** Class for representing a table of attributes suitable for querying.
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by 
  *          Jo Wood and Iain Dillingham.
- *  @version 2.2, 2nd April, 2013.
+ *  @version 1.2, 29th October, 2013.
  */ 
 //  ****************************************************************************************
 
