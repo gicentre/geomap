@@ -3,7 +3,7 @@ package org.gicentre.geomap;
 //*****************************************************************************************
 /** Enumerates the different feature types.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 10th January, 2012
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 

@@ -14,7 +14,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for drawing geographic maps in Processing
  *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 2.2, 2nd April, 2013
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 

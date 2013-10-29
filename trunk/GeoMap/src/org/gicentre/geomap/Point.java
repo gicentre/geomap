@@ -6,7 +6,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Class for representing and drawing a point feature.
  *  @author Jo Wood , giCentre, City University London.
- *  @version 1.0, 6th January, 2012
+ *  @version 1.2, 29th October, 2013.
  */
 // *****************************************************************************************
 
