@@ -1,0 +1,1 @@
+See http://www.gicentre.net/geomap/using for tutorial and examples using the latest version of geoMap.
