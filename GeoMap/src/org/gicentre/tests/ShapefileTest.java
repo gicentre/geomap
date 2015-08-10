@@ -28,6 +28,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
+// TODO: Update to use Processing 3.x libraries.
 
 @SuppressWarnings("serial")
 public class ShapefileTest extends PApplet
