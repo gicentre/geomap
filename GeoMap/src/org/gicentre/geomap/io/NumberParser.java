@@ -34,8 +34,8 @@ public final class NumberParser
 	private int     nDigits;
 	private int     bigIntExp;
 	private int     bigIntNBits;
-	private boolean mustSetRoundDir = false;
-	private int     roundDir; // set by doubleValue
+	//private boolean mustSetRoundDir = false;
+	//private int     roundDir; // set by doubleValue
 
 	private static FDBigInt b5p[];	// Used to store large powers of 5 for future reference.
 
@@ -63,18 +63,19 @@ public final class NumberParser
 	private static final int  bigDecimalExponent = 324; // i.e. abs(minDecimalExponent)
 
 	private static final long highbyte = 0xff00000000000000L;
-	private static final long highbit  = 0x8000000000000000L;
+	//private static final long highbit  = 0x8000000000000000L;
 	private static final long lowbytes = ~highbyte;
 
-	private static final int  singleSignMask =    0x80000000;
-	private static final int  singleExpMask  =    0x7f800000;
-	private static final int  singleFractMask =   ~(singleSignMask|singleExpMask);
-	private static final int  singleExpShift  =   23;
-	private static final int  singleFractHOB  =   1<<singleExpShift;
-	private static final int  singleExpBias   =   127;
-	private static final int  singleMaxDecimalDigits = 7;
-	private static final int  singleMaxDecimalExponent = 38;
-	private static final int  singleMinDecimalExponent = -45;
+//	private static final int  singleSignMask =    0x80000000;
+//	private static final int  singleExpMask  =    0x7f800000;
+//	private static final int  singleExpShift  =   23;
+	
+//	private static final int  singleFractMask =   ~(singleSignMask|singleExpMask);
+//	private static final int  singleFractHOB  =   1<<singleExpShift;
+//	private static final int  singleExpBias   =   127;
+//	private static final int  singleMaxDecimalDigits = 7;
+//	private static final int  singleMaxDecimalExponent = 38;
+//	private static final int  singleMinDecimalExponent = -45;
 
 	private static final int  intDecimalDigits = 9;
 
@@ -316,8 +317,8 @@ public final class NumberParser
 		nDigits = 0;
 		bigIntExp = 0;
 		bigIntNBits = 0;
-		mustSetRoundDir = false;
-		roundDir = 0;
+		//mustSetRoundDir = false;
+		//roundDir = 0;
 	}
 
 	private void init(boolean negSign, int decExponent, char[] digits, int n, boolean e) 
@@ -1404,7 +1405,7 @@ public final class NumberParser
 					case '+':
 						i++;
 					}
-					int expAt = i;
+					//int expAt = i;
 					expLoop:
 						while ( i < l  ){
 							if ( expVal >= reallyBig ){
@@ -1492,7 +1493,7 @@ public final class NumberParser
 		int kDigits = Math.min( nDigits, maxDecimalDigits+1 );
 		long    lValue;
 		double  dValue;
-		double  rValue, tValue;
+		double  rValue;//, tValue;
 
 		// First, check for NaN and Infinity values
 		if(digits == infinity || digits == notANumber)
@@ -1504,7 +1505,7 @@ public final class NumberParser
 			return (isNegative?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY); 
 		}
 
-		roundDir = 0;
+		//roundDir = 0;
 
 		//convert the lead kDigits to a long integer.
 		// (special performance hack: start to do it using int)
@@ -1551,10 +1552,10 @@ public final class NumberParser
 					 * thus one roundoff.
 					 */
 					rValue = dValue * small10pow[exp];
-					if ( mustSetRoundDir ){
-						tValue = rValue / small10pow[exp];
-						roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
-					}
+					//if ( mustSetRoundDir ){
+						//tValue = rValue / small10pow[exp];
+						//roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
+					//}
 					return (isNegative)? -rValue : rValue;
 				}
 				int slop = maxDecimalDigits - kDigits;
@@ -1568,10 +1569,10 @@ public final class NumberParser
 					dValue *= small10pow[slop];
 					rValue = dValue * small10pow[exp-slop];
 
-					if ( mustSetRoundDir ){
-						tValue = rValue / small10pow[exp-slop];
-						roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
-					}
+					//if ( mustSetRoundDir ){
+						//tValue = rValue / small10pow[exp-slop];
+						//roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
+					//}
 					return (isNegative)? -rValue : rValue;
 				}
 				/*
@@ -1583,10 +1584,10 @@ public final class NumberParser
 					 * Can get the answer in one division.
 					 */
 					rValue = dValue / small10pow[-exp];
-					tValue = rValue * small10pow[-exp];
-					if ( mustSetRoundDir ){
-						roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
-					}
+					//tValue = rValue * small10pow[-exp];
+					//if ( mustSetRoundDir ){
+						//roundDir = ( tValue ==  dValue ) ? 0 :( tValue < dValue ) ? 1 : -1;
+					//}
 					return (isNegative)? -rValue : rValue;
 				}
 				/*
@@ -1807,14 +1808,14 @@ public final class NumberParser
 				if ( (cmpResult = diff.cmp( halfUlp ) ) < 0 ){
 					// difference is small.
 					// this is close enough
-					roundDir = overvalue ? -1 : 1;
+					//roundDir = overvalue ? -1 : 1;
 					break correctionLoop;
 				} else if ( cmpResult == 0 ){
 					// difference is exactly half an ULP
 					// round to some other value maybe, then finish
 					dValue += 0.5*ulp( dValue, overvalue );
 					// should check for bigIntNBits == 1 here??
-					roundDir = overvalue ? -1 : 1;
+					//roundDir = overvalue ? -1 : 1;
 					break correctionLoop;
 				} else {
 					// difference is non-trivial.
@@ -2468,9 +2469,9 @@ public final class NumberParser
 			return (int)q;
 		}
 
-		/** Returns a long representation of the number stored in this class.
+		/* * Returns a long representation of the number stored in this class.
 		 *  @return Long representation.
-		 */ 
+		 * / 
 		public long longValue()
 		{
 			// if this can be represented as a long,
@@ -2499,6 +2500,7 @@ public final class NumberParser
 				throw new RuntimeException("Error: FDBigInt cannot be converted into a long value: "+toString());
 			}
 		}
+		*/
 
 		/** Provides a textual representation of the number stored in this class.
 		 * @return Textual representation of the big integer.

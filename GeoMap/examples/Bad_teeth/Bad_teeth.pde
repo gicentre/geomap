@@ -1,90 +1,63 @@
-/*
-  Draws a choropleth map of bad teeth data from gapminder.org.
-  It uses the giCentre's geoMap library.
-  Iain Dillingham, 2nd February 2012.
-*/
 import org.gicentre.geomap.*;
+
+//  Draws a choropleth map of dental health data from gapminder.org.
 
 GeoMap geoMap;
 Table tabBadTeeth;
-color cbGreysC, cbGreysF, cbGreysI, cbBluesC, cbBluesI;
-float dataMax, dataMin;
+color minColour, maxColour;
+float dataMax;
 
 void setup()
 {
   size(820, 440);
-  smooth();
-  noLoop();
-
+  displayDensity(pixelDensity);
+ 
+  // Read map data.
   geoMap = new GeoMap(10, 10, width-20, height-40, this);
   geoMap.readFile("world");
-  tabBadTeeth = new Table("bad_teeth.tsv", this);
+  geoMap.writeAttributesAsTable(5);         // Display first 5 rows of attribute table in console for checking.
+  
+  tabBadTeeth = loadTable("badTeeth.csv");  // Read dental health data.
 
-  // Colours from http://colorbrewer.org/
-  cbGreysC = color(240);
-  cbGreysF = color(189);
-  cbGreysI = color(99);
-  cbBluesC = color(222, 235, 247);
-  cbBluesI = color(49, 130, 189);
-
-  // Maximum and minimum data values
-  dataMax = -MAX_FLOAT;
-  dataMin = +MAX_FLOAT;
-
-  for (int row = 0; row < tabBadTeeth.getRowCount(); row++)
+  // Find largest data value so we can scale colours.
+  dataMax = 0;
+  for (TableRow row : tabBadTeeth.rows())
   {
-    dataMax = max(dataMax, tabBadTeeth.getFloatAt(row, 1));
-    dataMin = min(dataMin, tabBadTeeth.getFloatAt(row, 1));
+    dataMax = max(dataMax, row.getFloat(2));
   }
 
-  // Fonts
-  PFont font = createFont("Blokletters-Balpen", 10);
-  textFont(font);
+  minColour = color(222, 235, 247);   // Light blue
+  maxColour = color(49, 130, 189);    // Dark blue.
 }
 
 void draw()
 {
   background(255);
-  stroke(cbGreysF);
+  stroke(255);
   strokeWeight(0.5);
 
   // Draw countries
   for (int id : geoMap.getFeatures().keySet())
   {
-    String country = geoMap.getAttributes().getString(id, 3);
-    String badTeeth = tabBadTeeth.getString(country, 1);
+    String countryCode = geoMap.getAttributeTable().findRow(str(id),0).getString("ISO_A3");    
+    TableRow dataRow = tabBadTeeth.findRow(countryCode, 1);
 
-    if (badTeeth.equals("")) // No data
+    if (dataRow != null)       // Table row matches country code
     {
-      fill(cbGreysC);
+      float normBadTeeth = dataRow.getFloat(2)/dataMax;
+      fill(lerpColor(minColour, maxColour, normBadTeeth));
     }
-    else // Data
+    else                   // No data found in table.
     {
-      float normBadTeeth = norm(float(badTeeth), dataMin, dataMax);
-      fill(lerpColor(cbBluesC, cbBluesI, normBadTeeth));
+      fill(250);
     }
-
     geoMap.draw(id); // Draw country
   }
 
   // Draw title text
-  fill(cbGreysI);
-  String title = "Number of bad teeth per 12 year-old child (gapminder.org)";
-  textAlign(LEFT, CENTER);
-  text(title, 10, height-30, width-20, 30);
+  fill(50);
+  textAlign(LEFT, TOP);
+  text("Number of bad teeth per 12 year-old child", 10, height-20);
 
-  // Draw the frame line
-  strokeWeight(1);
-  noFill();
-  rect(10, 10, width-20, height-40);
+  noLoop();    // Static map so no need to redraw.
 }
-
-void keyPressed()
-{
-  // Save a copy of the map
-  if (key == 'c')
-  {
-    save("Bad_teeth.png");
-  }
-}
-
