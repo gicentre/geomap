@@ -12,7 +12,7 @@ import java.nio.charset.CharsetDecoder;
 //************************************************************************************************
 /** Reads Dbase III files. This code is based on the class provided as part of the Geotools 
   * OpenSource mapping toolkit - <a href="http://www.geotools.org/">http://www.geotools.org/</a>
-  * under the GNU Lesser General Public License. The general use of this class is:<code><pre>
+  * under the GNU Lesser General Public License. The general use of this class is:<pre>
   * FileChannel in = new FileInputStream("thefile.dbf").getChannel();
   * DbaseFileReader r = new DbaseFileReader( in )
   * Object[] fields = new Object[r.getHeader().getNumFields()];
@@ -22,14 +22,14 @@ import java.nio.charset.CharsetDecoder;
   *    // do stuff
   * }
   * r.close();
-  * </pre></code>
+  * </pre>
   * For consumers who wish to be a bit more selective with their reading of rows, the Row object 
   * has been added. The semantics are the same as using the readEntry method, but remember that
   * the Row object is always the same. The values are parsed as they are read, so it pays to copy
   * them out (as each call to Row.read() will result in an expensive String parse).
-  * <br /><b>EACH CALL TO readEntry OR readRow ADVANCES THE FILE!</b><br />
+  * <br><b>EACH CALL TO readEntry OR readRow ADVANCES THE FILE!</b><br>
   * An example of using the Row method of reading:
-  * <code><pre>
+  * <pre>
   * FileChannel in = new FileInputStream("thefile.dbf").getChannel();
   * DbaseFileReader r = new DbaseFileReader(in)
   * int fields = r.getHeader().getNumFields();
@@ -43,7 +43,7 @@ import java.nio.charset.CharsetDecoder;
   *   }
   * }
   * r.close();
-  * </pre></code>
+  * </pre>
   * @author Ian Schneider with minor modifications by Jo Wood.
   * @version 2.4, 10th January 2012.
   */
@@ -556,7 +556,7 @@ public class DbaseFileReader
         /** Reads in a single item from the database row at the given column.
           * @param column Column to read.
           * @return Object read from this row at the given column.
-          * @throws IOException
+          * @throws IOException Thrown if problem reading the record.
           */  
         public Object read(int column) throws IOException 
         {

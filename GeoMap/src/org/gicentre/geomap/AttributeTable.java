@@ -74,6 +74,7 @@ public class AttributeTable
 
 	/** Creates a table from the given tab separated values file.
 	 *  @param filename Name of file containing the TSVs.
+	 *  @param parent Parent sketch from which file reading is handled.
 	 */
 	public AttributeTable(String filename, PApplet parent) 
 	{
@@ -622,6 +623,7 @@ public class AttributeTable
 	/** Builds an old AttributeTable from the given Table. This is used for creating backward 
 	 *  compatible versions of an attribute table associated with a geoMap.
 	 *  @param table Table to convert.
+	 *  @param parent Parent sketch that deals with file handling should the attribute table need saving.
 	 *  @return Old attribute table.
 	 */
 	public static AttributeTable buildOldTable(Table table, PApplet parent)

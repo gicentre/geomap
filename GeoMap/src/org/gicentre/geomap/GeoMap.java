@@ -119,12 +119,11 @@ public class GeoMap implements Geographic
     /** Draws all features that match the given attribute stored in the given column of
      *  the attribute table. If no features are found or the given column is out of bounds,
      *  nothing is drawn
-     *  @param attribute Attribute identifying features to draw.
+     *  @param regex Regular expression to match the ID of attribute identifying features to draw.
      *  @param col Column in the attribute table (where ID is column 0) to search.
      */
     public void draw(String regex, int col)
     {
-    	//Set<Integer> ids = attributes.match(attribute, col);
     	Set<Integer> ids = new HashSet<>();
     	for (TableRow row : attributes.matchRows(regex, col))
     	{
