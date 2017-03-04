@@ -4,8 +4,8 @@ package org.gicentre.geomap;
 /** Factory to produce drawable renderers. This factory will allow renderers created in 
  *  external libraries to be used by geoMap utilities. It's main purpose is to allow sketchy
  *  graphics to be drawn with a HandyRenderer from the handy library.
- *  @author Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */ 
 // *****************************************************************************************
 

@@ -5,10 +5,10 @@ import java.awt.geom.Line2D;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-//*****************************************************************************************
+// *****************************************************************************************
 /** Class for representing and drawing a line feature.
- *  @author Jo Wood , giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood , giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */
 // *****************************************************************************************
 

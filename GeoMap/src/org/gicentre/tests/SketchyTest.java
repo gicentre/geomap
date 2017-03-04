@@ -73,7 +73,7 @@ public class SketchyTest extends PApplet
 		// Load US states as basemap.
 		geoMap = new GeoMap(this);
 		geoMap.readFile("GeoMap/data/usContinental");
-		
+		geoMap.writeAttributesAsTable(5);
 		
 		// Create a handy sketchy renderer and add it to each of the non-point features.
 		handy = new HandyRenderer(this);
@@ -135,10 +135,7 @@ public class SketchyTest extends PApplet
 			fill(100,125,100);
 			strokeWeight(2);
 			geoMap.draw(id);
-			
-			// Feature name stored in column 3 (4th column) of the attribute table
-			name = geoMap.getAttributes().getString(Integer.toString(id), 3);
-			//name = geoMap.getAttributeAsString(Integer.toString(id),3);
+			name = geoMap.getAttributeTable().findRow(Integer.toString(id),"id").getString("Name");
 		}
 		
 		popMatrix();

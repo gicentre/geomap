@@ -5,7 +5,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 
-import org.gicentre.geomap.AttributeTable;
 import org.gicentre.geomap.Feature;
 import org.gicentre.geomap.FeatureType;
 import org.gicentre.geomap.GeoMap;
@@ -14,6 +13,7 @@ import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
 
 import processing.core.PApplet;
+import processing.data.Table;
 
 //  **************************************************************************************************
 /** Writes out a geoMap object as a collection of ESRI shapefiles. A shapefile consists of 3 separate
@@ -22,7 +22,7 @@ import processing.core.PApplet;
  *  <code><i>name</i>.dbf</code> containing the attributes. If a geoMap object contains more than one
  *  object type (point, line or area), a triplet of files is written for each type.
  *  @author Jo Wood, giCentre.
- *  @version 3.1, 2nd April, 2013.
+ *  @version 3.2, 4th March, 2017.
  */
 //  **************************************************************************************************
 
@@ -173,11 +173,11 @@ public class ShapefileWriter
 	 *  @param table Table to examine.
 	 *  @return Maximum width of each of the columns in the table.
 	 */
-	private int[] calcMaxWidths(AttributeTable table)
+	private int[] calcMaxWidths(Table table)
 	{
-		int numCols = table.findNumCols();
+		int numCols = table.getColumnCount();
 		int numRows = table.getRowCount();
-		String[] header = table.getHeadings();
+		String[] header = table.getColumnTitles();
 		
 		// Find the maximum number of characters in each column.
 		int[] maxWidths = new int[numCols];
@@ -195,7 +195,6 @@ public class ShapefileWriter
 				maxWidths[col] = Math.max(maxWidths[col], table.getString(row,col).length());
 			}
 		}
-		
 		return maxWidths;
 	}
 
@@ -209,9 +208,9 @@ public class ShapefileWriter
 		{
 			// Create the dbase header.
 			DbaseFileHeader header = new DbaseFileHeader();
-			AttributeTable attributes = geoMap.getAttributes();
+			Table attributes = geoMap.getAttributeTable();
 
-			String[] headings = attributes.getHeadings();
+			String[] headings = attributes.getColumnTitles();
 			int[] maxWidths = calcMaxWidths(attributes);
 
 			for (int i=0; i<maxWidths.length; i++)

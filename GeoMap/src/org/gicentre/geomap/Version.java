@@ -2,8 +2,8 @@ package org.gicentre.geomap;
 
 //  *****************************************************************************************
 /** Stores version information about the geoMap library.
-*   @author Jo Wood, giCentre, City University London.
-*   @version 1.2, 29th October, 2013
+*   @author Jo Wood, giCentre, City University of London.
+*   @version 1.3, 4th March, 2017.
 */ 
 //  *****************************************************************************************
 
@@ -23,8 +23,8 @@ package org.gicentre.geomap;
 
 public class Version 
 {
-	private static final float  VERSION = 1.2f;
-	private static final String VERSION_TEXT = "geoMap vector mapping package V1.2, 29th October, 2013";
+	private static final float  VERSION = 1.3f;
+	private static final String VERSION_TEXT = "geoMap vector mapping package V1.3, 4th March, 2017";
 
 	/** Reports the current version of the geoMap package.
 	 *  @return Text describing the current version of this package.

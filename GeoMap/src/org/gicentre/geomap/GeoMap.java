@@ -1,6 +1,9 @@
 package org.gicentre.geomap;
 
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,11 +13,13 @@ import org.gicentre.geomap.io.ShapefileWriter;
 
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.data.Table;
+import processing.data.TableRow;
 
 // *****************************************************************************************
 /** Class for drawing geographic maps in Processing
- *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood and Iain Dillingham, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */
 // *****************************************************************************************
 
@@ -40,7 +45,8 @@ public class GeoMap implements Geographic
     private float minGeoY, maxGeoY;                        // Minimum and maximum geographic values in the y direction.
     private float xOrigin, yOrigin, mapWidth, mapHeight;   // The bounds of the map in screen coordinates.
     private Map<Integer, Feature> features;                // The key/value pair for each feature.
-    private AttributeTable attributes;					   // Attribute table associated with feature collection.
+    //private AttributeTable attributes;					   // Attribute table associated with feature collection.
+    private Table attributes;							   // Attribute table associated with the feature collection.
     private int numPoints,numLines,numPolys;			   // Number of features of each type.
     private int numLineVertices, numPolygonVertices;	   // Total number of vertices in all features.
     private int numPolygonParts;
@@ -76,7 +82,8 @@ public class GeoMap implements Geographic
         this.minGeoY    = yOrigin;
         this.maxGeoY    = yOrigin+mapHeight;	
         this.features   = new LinkedHashMap<Integer, Feature>();
-        this.attributes = new AttributeTable(0,0,parent);
+        //this.attributes = new AttributeTable(0,0,parent);
+        this.attributes = new Table();
         this.numPoints  = 0;
         this.numLines   = 0;
         this.numPolys   = 0;
@@ -115,11 +122,15 @@ public class GeoMap implements Geographic
      *  @param attribute Attribute identifying features to draw.
      *  @param col Column in the attribute table (where ID is column 0) to search.
      */
-    public void draw(String attribute, int col)
+    public void draw(String regex, int col)
     {
-    	Set<Integer> ids = attributes.match(attribute, col);
-    	
-    	
+    	//Set<Integer> ids = attributes.match(attribute, col);
+    	Set<Integer> ids = new HashSet<>();
+    	for (TableRow row : attributes.matchRows(regex, col))
+    	{
+    		ids.add(row.getInt(0));
+    	}
+    	    	
     	for (Integer id : ids)
     	{
     		Feature feature = features.get(id);
@@ -204,7 +215,7 @@ public class GeoMap implements Geographic
     	maxGeoX = reader.getMaxX();
     	maxGeoY = reader.getMaxY();
     	features = reader.getFeatures();
-    	attributes = reader.getAttributes();
+    	attributes = reader.getAttributeTable();
     	
     	numPoints += reader.getNumPoints();
     	numLines += reader.getNumLines();
@@ -297,10 +308,24 @@ public class GeoMap implements Geographic
 	
 	/** Reports the attribute table associated with this geoMap object.
 	 *  @return Attribute table associated with this geoMap.
+	 *  
 	 */
-	public AttributeTable getAttributes()
+	public Table getAttributeTable()
 	{
 		return attributes;
+	}
+	
+	/** Provides an attribute table representing the attributes in this geoMap.
+	 *  Now this method is deprecated, it may be slower than previously as it creates a new 
+	 *  deprecated version of the table each time it is called.
+	 *  @return Attribute table associated with this geoMap.
+	 *  @deprecated Use getAttributeTable instead that uses Processing's own Table class to store attributes.
+	 */
+	@Deprecated
+	public AttributeTable getAttributes()
+	{
+		System.err.println("Warning: getAttributes() is deprecated in geoMap. Use getAttributeTable() instead.");
+		return AttributeTable.buildOldTable(attributes, parent);
 	}
 	
 	/* * Reports the attribute as a string at the given column with the given ID. Column numbering starts
@@ -382,9 +407,21 @@ public class GeoMap implements Geographic
 	*/
 	
 	/** Sets the attribute table to be associated with this geoMap object.
+	 *  Now this method has been deprecated it may be slower than previously as a new table is created each time it is called.
+	 *  @param attributes New attribute table to be associated with this geoMap.
+	 *  @deprecated Use setAttributeTable() instead that uses Processing's own Table class.
+	 */
+	@Deprecated
+	public void setAttributes(AttributeTable attributes)
+	{
+		System.err.println("Warning: setAttributes() is deprecated in geoMap. Use setAttributeTable() instead.");
+		this.attributes = AttributeTable.buildNewTable(attributes);
+	}
+	
+	/** Sets the attribute table to be associated with this geoMap object.
 	 *  @param attributes New attribute table to be associated with this geoMap.
 	 */
-	public void setAttributes(AttributeTable attributes)
+	public void setAttributeTable(Table attributes)
 	{
 		this.attributes = attributes;
 	}
@@ -421,7 +458,139 @@ public class GeoMap implements Geographic
 		return maxGeoY;
 	}
 	
+	/** Writes the attributes of this geoMap as formatted text to standard output. This is designed
+	 *  for producing 'pretty' text output so the attribute table can be examined more easily.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
+	 */
+	public void writeAttributesAsTable(int maxNumRows) 
+	{
+		writeAttributesAsTable(new PrintWriter(new OutputStreamWriter(System.out)),maxNumRows);
+	}
+	
+	/** Writes the attributes of this geoMap as formatted text to the file with the given name. 
+	 *  This is designed for producing 'pretty' text output so the attribute table can be examined more easily.
+	 *  @param fileName Name of file to contain the formatted output.
+	 *  @param maxNumRows Maximum number of rows of the table to display.
+	 */
+	public void writeAttributesAsTable (String fileName, int maxNumRows) 
+	{
+		writeAttributesAsTable(parent.createWriter(fileName), maxNumRows);
+	}
+		
+	/** Writes the attributes of this geoMap as formatted text to the given writer. This is designed
+	 *  for producing 'pretty' text output so the attribute table can be examined more easily.
+	 *  @param writer Output writer in which to send attribute table contents.
+	 *  @param maxNumRows Maximum number of rows of the attribute table to display.
+	 */
+	public void writeAttributesAsTable(PrintWriter writer, int maxNumRows) 
+	{
+		int numRows = attributes.getRowCount();
+		int numCols = attributes.getColumnCount();
+		int[] maxWidths = calcMaxWidths(attributes);
+		String[] header = attributes.getColumnTitles();
+		
+		int totalWidth = numCols+1;
+		for (int col=0; col<maxWidths.length; col++)
+		{
+			totalWidth += maxWidths[col];
+		}
+
+		// Display formatted output.
+		for (int i=0; i<totalWidth; i++)
+		{
+			writer.print("-");
+		}
+		writer.println();
+
+		if (header != null)
+		{
+			writer.print("|");
+			for (int col=0; col<numCols; col++)
+			{
+				int numSpaces = maxWidths[col];
+				if (col<header.length) 
+				{
+					writer.print(header[col]);
+					numSpaces -= header[col].length();
+				}
+				for (int space=0; space<numSpaces; space++)
+				{
+					writer.print(" ");
+				}
+				writer.print("|");
+			}
+			writer.println();
+
+			for (int i=0; i<totalWidth; i++)
+			{
+				writer.print("-");
+			}
+			writer.println();
+		}
+
+		for (int row=0; row<Math.min(maxNumRows,numRows); row++)
+		{
+			writer.print("|");
+			for (int col=0; col<numCols; col++)
+			{
+				
+				int numSpaces = maxWidths[col];
+				
+				writer.print(attributes.getString(row, col));
+				numSpaces -= attributes.getString(row, col).length();
+				
+				for (int space=0; space<numSpaces; space++)
+				{
+					writer.print(" ");
+				}
+				
+				writer.print("|");
+			}
+			writer.println();
+		}
+
+		if (numRows <= maxNumRows)
+		{
+			for (int i=0; i<totalWidth; i++)
+			{
+				writer.print("-");
+			}
+			writer.println();
+		}
+		writer.flush();
+	}
+	
 	// --------------------------------- Private methods ---------------------------------
+	
+	/** Calculates the maximum widths of the values in each column of the given table. 
+	 *  A width is the number of characters in a cell. Useful for pretty text formatting.
+	 *  @return Maximum width of each of the columns in the table.
+	 */
+	private static int[] calcMaxWidths(Table table)
+	{
+		int numCols = table.getColumnCount();
+		int numRows = table.getRowCount();
+		
+		// Find the maximum number of characters in each column.
+		int[] maxWidths = new int[numCols];
+		String[] header = table.getColumnTitles();
+		if (header != null)
+		{
+			for (int col=0; col<header.length; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], header[col].length());
+			}
+		}
+		for (int row=0; row<numRows; row++)
+		{
+			for (int col=0; col<numCols; col++)
+			{
+				maxWidths[col] = Math.max(maxWidths[col], table.getString(row, col).length());
+			}
+		}
+		return maxWidths;
+	}
+	
 	
 	/* * Reports the ids of all items at the given column index that match the given text
 	 *  @param attribute Text to search for.

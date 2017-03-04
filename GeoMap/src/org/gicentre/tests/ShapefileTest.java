@@ -67,7 +67,8 @@ public class ShapefileTest extends PApplet
 		geoMap.readFile("GeoMap/data/world");
 				
 		// Check attribute table has been loaded correctly by printing out the first 5 lines.
-		geoMap.getAttributes().writeAsTable(5);
+		//geoMap.getAttributes().writeAsTable(5);
+		geoMap.writeAttributesAsTable(5);
 		//geoMap.getAttributes().writeTSV(new PrintWriter(System.out));
 	}
 

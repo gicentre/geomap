@@ -2,8 +2,8 @@ package org.gicentre.geomap;
 
 // *****************************************************************************************
 /** Identifies the behaviour of all features.
- *  @author Iain Dillingham and Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood and Iain Dillingham, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2014.
  */
 // *****************************************************************************************
 

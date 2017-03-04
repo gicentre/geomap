@@ -2,10 +2,10 @@ package org.gicentre.geomap;
 
 import processing.core.PVector;
 
-//*****************************************************************************************
+// *****************************************************************************************
 /** Identifies the behaviour of a geographic object that can be drawn on screen.
- *  @author Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */
 // *****************************************************************************************
 

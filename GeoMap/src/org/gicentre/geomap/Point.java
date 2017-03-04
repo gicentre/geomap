@@ -3,10 +3,10 @@ package org.gicentre.geomap;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-//*****************************************************************************************
+// *****************************************************************************************
 /** Class for representing and drawing a point feature.
- *  @author Jo Wood , giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood , giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */
 // *****************************************************************************************
 
@@ -30,7 +30,7 @@ public class Point implements Feature
 	
 	private PVector p;				// Coordinates of the point.
     private PApplet parent;			// Parent sketch.
-    private Drawable renderer;		// Renderer used for drawing feature in a non-defult style.
+    private Drawable renderer;		// Renderer used for drawing feature in a non-default style.
   
     private static float tolDistSq;	// Squared tolerance distance used for point matching.
     

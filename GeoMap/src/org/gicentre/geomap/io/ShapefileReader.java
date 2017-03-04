@@ -8,7 +8,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.gicentre.geomap.AttributeTable;
 import org.gicentre.geomap.Feature;
 import org.gicentre.geomap.GeoMap;
 import org.gicentre.geomap.Line;
@@ -16,14 +15,15 @@ import org.gicentre.geomap.Point;
 import org.gicentre.geomap.Polygon;
 
 import processing.core.PApplet;
+import processing.data.Table;
 
-//**************************************************************************************************
+//  **************************************************************************************************
 /** Readers an ESRI shapefile and populates a GeoMap object with its features and attributes.
  *  A shapefile should consist of 3 separate files - <code><i>name</i>.shp</code> containing the
  *  geometry; <code><i>name</i>.shx</code> containing the file offsets for the components that make 
  *  up the geometry; and <code><i>name</i>.dbf</code> containing the attributes.
- *  @author Jo Wood, giCentre.
- *  @version 3.1, 2nd April, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 3.2, 4th March, 2017.
  */
 //  **************************************************************************************************
 
@@ -48,7 +48,7 @@ public class ShapefileReader
 	private int recordNumber;						// ID of each record in the shapefile.
 
 	private LinkedHashMap<Integer, Feature>features;// Stores feature geometry.
-	private AttributeTable attributes;				// Stores feature attributes.
+	private Table attributes;						// Stores feature attributes.
 	
 	private PApplet parent;							// Parent sketch.
 	
@@ -226,9 +226,21 @@ public class ShapefileReader
 	}
 	
 	/** Provides the attribute table that has been extracted from the shapefile.
+	 *  Now this method is deprecated, it may be slower than previously as it creates a new 
+	 *  deprecated version of the table each time it is called.
+	 *  @return Attribute table from shapefile.
+	 *  @deprecated Use getAttributeTable instead that uses Processing's own Table class to store attributes.
+	 */
+	@Deprecated
+	public org.gicentre.geomap.AttributeTable getAttributes()
+	{
+		return org.gicentre.geomap.AttributeTable.buildOldTable(attributes,parent);
+	}
+	
+	/** Provides the attribute table that has been extracted from the shapefile.
 	 *  @return Attribute table from shapefile.
 	 */
-	public AttributeTable getAttributes()
+	public Table getAttributeTable()
 	{
 		return attributes;
 	}
@@ -402,7 +414,6 @@ public class ShapefileReader
 	 *  @param readZ Reads a z value if true.
 	 *  @param readM Reads a measure if true. NOTE: measure value not currently stored.
 	 */
-	@SuppressWarnings("null")
 	private void addMultiPoint(InputStream inStream, boolean readZ, boolean readM)
 	{
 		// Skip bounding box info.
@@ -898,24 +909,23 @@ public class ShapefileReader
 			{
 				headings[i] = header.getFieldName(i-1);
 			}
-
-			attributes = new AttributeTable(header.getNumRecords(), header.getNumFields()+1,parent);
-			attributes.setHeadings(headings);
-//			attributes = new Table(parent);
-//			attributes.setColumnCount(header.getNumFields()+1);
-//			attributes.setRowCount(header.getNumRecords());
-//			attributes.setColumnTitles(headings);
+			
+			// Note the first column will always be the numeric id associated with the geometric features.
+			attributes = new Table();
+			attributes.setColumnCount(header.getNumFields()+1);
+			attributes.setRowCount(header.getNumRecords());
+			attributes.setColumnTitles(headings);
 			int id = 1;
 			
-			// Read in row at a time.
+			// TODO: SET COLUMN TYPE (INT, FLOAT, STRING) BASED ON DBF COL TYPES?
 			while (reader.hasNext()) 
 			{      
 				Object[] atts = reader.readSimpleEntry();
-				attributes.setIntAt(id-1, 0, id);
+				attributes.setInt(id-1, 0, id);
 				
 				for (int i=0; i<atts.length; i++)
 				{
-					attributes.setStringAt(id-1, i+1, atts[i].toString());
+					attributes.setString(id-1, i+1, atts[i].toString());
 				}
 				id++;
 			}

@@ -2,8 +2,8 @@ package org.gicentre.geomap;
 
 // *****************************************************************************************
 /** Defines the minimum functionality for a renderer to draw graphic primitives. 
- *  @author Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */ 
 // *****************************************************************************************
 

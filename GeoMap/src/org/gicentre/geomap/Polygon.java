@@ -109,7 +109,6 @@ public class Polygon implements Feature
     /** Draws the polygon in the parent sketch.
      *  @param transformer Class that handles the geographic to screen transformations.
      */
-    @SuppressWarnings("null")
 	public void draw(Geographic transformer)
     {
     	if (renderer == null)

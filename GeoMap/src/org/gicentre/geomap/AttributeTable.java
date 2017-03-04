@@ -7,12 +7,15 @@ import java.util.Set;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.data.Table;
 
 //  ****************************************************************************************
 /** Class for representing a table of attributes suitable for querying.
+ *  @deprecated Should use Processing's Table class instead. This class is maintained for
+ *              backward compatibility only (it was written before the Processing Table class).
  *  @author Ben Fry (http://ben.fry.com/writing/map/Table.pde) with modifications by 
- *          Jo Wood and Iain Dillingham.
- *  @version 1.2, 29th October, 2013.
+ *          Jo Wood and Iain Dillingham, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */ 
 //  ****************************************************************************************
 
@@ -29,12 +32,9 @@ import processing.core.PConstants;
  * source code (see COPYING.LESSER included with this source code). If not, see
  * http://www.gnu.org/licenses/.
  */
+@Deprecated
 public class AttributeTable
-{
-	
-	// TODO: When processing.data.Table is fully developed, use that instead and deprecate AttributeTable.
-	// @deprecated Should use Processing 2.x built-in Table class instead.
-	
+{	
 	// --------------------------------- Object variables ---------------------------------
 
 	private String[] header;		// Column headings.
@@ -59,6 +59,7 @@ public class AttributeTable
 	 */
 	public AttributeTable(int numRows, int numCols, PApplet parent) 
 	{
+		System.err.println("Warning: AttributeTable is deprecated in geoMap.");
 		this.parent = parent;
 		data = new String[numRows][numCols];
 		for (int row=0; row<data.length; row++)
@@ -76,6 +77,7 @@ public class AttributeTable
 	 */
 	public AttributeTable(String filename, PApplet parent) 
 	{
+		System.err.println("Warning: AttributeTable is deprecated in geoMap.");
 		this.parent = parent;
 		String[] rows = parent.loadStrings(filename);
 
@@ -615,5 +617,57 @@ public class AttributeTable
 			writer.println();
 		}
 		writer.flush();
+	}
+	
+	/** Builds an old AttributeTable from the given Table. This is used for creating backward 
+	 *  compatible versions of an attribute table associated with a geoMap.
+	 *  @param table Table to convert.
+	 *  @return Old attribute table.
+	 */
+	public static AttributeTable buildOldTable(Table table, PApplet parent)
+	{
+		int numRows = table.getRowCount();
+		int numCols = table.getColumnCount();
+		
+		AttributeTable oldTable = new AttributeTable(numRows, numCols, parent);
+		oldTable.setHeadings(table.getColumnTitles());
+		
+		for (int row=0; row<numRows; row++)
+		{
+			for (int col=0; col<numCols; col++)
+			{
+				oldTable.setStringAt(row, col, table.getString(row, col));
+			}
+		}
+		
+		return oldTable;
+	}
+	
+	/** Builds a Table from the given (deprecated) attribute table. This is used for converting from
+	 *  backward compatible versions of an attribute table associated with a geoMap.
+	 *  @param oldTable Old table to convert.
+	 *  @return New attribute table.
+	 */
+	public static Table buildNewTable(AttributeTable oldTable)
+	{
+		int numRows = oldTable.getRowCount();
+		int numCols = oldTable.findNumCols();
+		
+		Table newTable = new Table();
+		newTable.setColumnCount(numCols);
+		newTable.setRowCount(numRows);
+		newTable.setColumnTitles(oldTable.getHeadings());
+				
+		for (int row=0; row<numRows; row++)
+		{
+			for (int col=0; col<numCols; col++)
+			{
+				newTable.setString(row, col, oldTable.getStringAt(row, col));
+			}
+		}
+		
+		// TODO: Set the attribute types based on content?
+		
+		return newTable;
 	}
 }
