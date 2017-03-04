@@ -9,8 +9,8 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests shapefile reading into geoMap objects, query of the attribute file and mouse-based
  *  spatial query.
- *  @author Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */ 
 //  ****************************************************************************************
 
@@ -27,10 +27,6 @@ import processing.core.PVector;
  * source code (see COPYING.LESSER included with this source code). If not, see
  * http://www.gnu.org/licenses/.
  */
-
-// TODO: Update to use Processing 3.x libraries.
-
-@SuppressWarnings("serial")
 public class ShapefileTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -50,21 +46,26 @@ public class ShapefileTest extends PApplet
 
 	// ---------------------------- Processing methods -----------------------------
 
+	/** Sets size and pixel density of the sketch.
+	 */
+	public void settings()
+	{   
+		size(800,400);
+		displayDensity(pixelDensity);
+	}
+	
 	/** Initialises the sketch.
 	 */
 	public void setup()
 	{   
-		size(800,400);
-		smooth();
 		zoomer = new ZoomPan(this);
+		zoomer.setMinZoomScale(1);
 		textFont(createFont("Sans-serif", 20));
 
 		// Read a global country outlines shapefile.
 		geoMap = new GeoMap(this);
-		geoMap.readFile("world");
-		
-		//geoMap.readFile("/Users/jwo/Documents/Processing/mySketches/sketchyLondon/data/bikeAreaExtended");
-		
+		geoMap.readFile("GeoMap/data/world");
+				
 		// Check attribute table has been loaded correctly by printing out the first 5 lines.
 		geoMap.getAttributes().writeAsTable(5);
 		//geoMap.getAttributes().writeTSV(new PrintWriter(System.out));
@@ -133,5 +134,15 @@ public class ShapefileTest extends PApplet
 	public void mouseDragged()
 	{
 		loop();
+	}
+	
+	@Override
+	public void keyPressed()
+	{
+		if ((key == 'r') || (key=='R'))
+		{
+			zoomer.reset();
+			loop();
+		}
 	}
 }

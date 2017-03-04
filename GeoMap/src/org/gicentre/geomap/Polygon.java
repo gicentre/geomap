@@ -4,8 +4,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
-
-import org.gicentre.handy.HandyRenderer;
+import java.util.List;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -14,7 +13,7 @@ import processing.core.PVector;
 //*****************************************************************************************
 /** Class for drawing a polygon in screen coordinate space.
  *  @author Jo Wood and Iain Dillingham, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @version 1.3, 4th March, 2017.
  */
 // *****************************************************************************************
 
@@ -134,7 +133,7 @@ public class Polygon implements Feature
             {
             	if (containsGeom)
             	{
-            		renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
+            		renderer.shape(toArray(x),toArray(y));
             	}
             	x = new ArrayList<Float>();
             	y = new ArrayList<Float>();
@@ -145,7 +144,7 @@ public class Polygon implements Feature
             {
             	if (containsGeom)
             	{
-            		renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
+            		renderer.shape(toArray(x),toArray(y));
             		containsGeom = false;
             	}
             }
@@ -161,10 +160,10 @@ public class Polygon implements Feature
         }
         if (containsGeom)
         {
-        	renderer.shape(HandyRenderer.toArray(x),HandyRenderer.toArray(y));
+        	renderer.shape(toArray(x),toArray(y));
         }
     }  
-    
+        
     /** Reports the number of vertices that make up the polygon feature.
      *  @return number of vertices that make up the polygon.
      */
@@ -352,4 +351,19 @@ public class Polygon implements Feature
         	parent.endShape(PConstants.CLOSE);
         }
     }
+    
+    /** Converts an array list of numeric values into a floating point array.
+   	 *  Useful for methods that require primitive arrays of floats based on a dynamic collection.
+   	 *  @param list List of numbers to convert.
+   	 *  @return Array of floats representing the list.
+   	 */
+   	private static float[] toArray(List<Float> list)
+   	{
+   		float[] array = new float[list.size()];
+   		for (int i=0; i< list.size(); i++)
+   		{
+   			array[i] = list.get(i).floatValue();
+   		}
+   		return array;
+   	}
 }

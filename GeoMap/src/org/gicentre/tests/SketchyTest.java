@@ -12,8 +12,8 @@ import processing.core.PVector;
 
 //  ****************************************************************************************
 /** Tests the Handy renderer plugin with a geoMap example.
- *  @author Jo Wood, giCentre, City University London.
- *  @version 1.2, 29th October, 2013.
+ *  @author Jo Wood, giCentre, City University of London.
+ *  @version 1.3, 4th March, 2017.
  */ 
 //  ****************************************************************************************
 
@@ -31,7 +31,6 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class SketchyTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -53,20 +52,27 @@ public class SketchyTest extends PApplet
 
 	// ---------------------------- Processing methods -----------------------------
 
-	/** Initialises the sketch.
+	/** Sets size and pixel density of the sketch.
 	 */
-	public void setup()
+	@Override
+	public void settings()
 	{   
 		size(800,400);
-		//size(1700,900);
-		smooth();
+		displayDensity(pixelDensity);
+	}
+	
+	/** Initialises the sketch.
+	 */
+	@Override
+	public void setup()
+	{   
 		zoomer = new ZoomPan(this);
-		textFont(loadFont("ArchitectsDaughter-32.vlw"));
+		textFont(loadFont("GeoMap/data/ArchitectsDaughter-32.vlw"));
 		isHandy = true;
 
 		// Load US states as basemap.
 		geoMap = new GeoMap(this);
-		geoMap.readFile("usContinental");
+		geoMap.readFile("GeoMap/data/usContinental");
 		
 		
 		// Create a handy sketchy renderer and add it to each of the non-point features.
