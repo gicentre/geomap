@@ -1,24 +1,23 @@
-/*
-  Draws a simple world map.
-  It uses the giCentre's geoMap library.
-  Iain Dillingham, 18th January 2011.
-*/
 import org.gicentre.geomap.*;
 
+// Simple world map using the geoMap library
 GeoMap geoMap;
 
 void setup()
 {
   size(800, 400);
-  smooth();
-  geoMap = new GeoMap(this);
-  geoMap.readFile("world");
+  
+  geoMap = new GeoMap(this);  // Create the geoMap object.
+  geoMap.readFile("world");   // Read shapefile.
 }
 
 void draw()
 {
-  background(180, 210, 240);
-  fill(150, 190, 150);
-  geoMap.draw();
+  background(202, 226, 245);  // Ocean colour
+  fill(206,173,146);          // Land colour
+  stroke(0,40);               // Boundary colour
+  
+  geoMap.draw();              // Draw the entire map.
+  
+  noLoop();                   // Static map so no need to redraw.
 }
-
