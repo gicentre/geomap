@@ -10,8 +10,7 @@ float dataMax;
 void setup()
 {
   size(820, 440);
-  displayDensity(pixelDensity);
- 
+  
   // Read map data.
   geoMap = new GeoMap(10, 10, width-20, height-40, this);
   geoMap.readFile("world");
